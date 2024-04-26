@@ -1,8 +1,10 @@
+import { Toaster } from "react-hot-toast";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
 import NavBar from "@/components/sections/navbar";
+import { Providers } from "@/components/providers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,8 +21,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <NavBar />
-        <main className="flex flex-col flex-1 bg-muted/50">{children}</main>
+        <Toaster />
+        <Providers
+          attribute="class"
+          defaultTheme="system"
+          enableSystem={true}
+          disableTransitionOnChange
+        >
+          <NavBar />
+          <main className="flex flex-col flex-1 bg-muted/50">{children}</main>
+        </Providers>
       </body>
     </html>
   );
