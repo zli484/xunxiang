@@ -27,6 +27,15 @@ const randomDescriptions = [
   "艺术鉴赏", // art appreciation
   "户外探险", // outdoor adventures
   "摄影爱好者", // photography enthusiast
+  "动漫迷", // anime fan
+  "游戏玩家", // gamer
+  "动物爱好者", // animal lover
+  "植物爱好者", // plant lover
+  "时尚达人", // fashionista
+  "美妆达人", // beauty guru
+  "健身达人", // fitness enthusiast
+  "瑜伽爱好者", // yoga lover
+  "烹饪大师", // master chef
 ];
 
 export default function UserScreen({
@@ -87,7 +96,7 @@ export default function UserScreen({
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ description: description, topK: 10 }),
+        body: JSON.stringify({ description: description, topK: 5 }),
       });
       if (!response.ok) {
         throw new Error("Failed to fetch");

@@ -40,29 +40,24 @@ export default function NavBar() {
                 </div>
                 <div className="hidden lg:ml-6 lg:flex lg:space-x-8">
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
+
                   <a
-                    href="#"
-                    className="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
-                  >
-                    首页
-                  </a>
-                  <a
-                    href="#"
+                    href="user"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   >
-                    寻向板块
+                    Members
                   </a>
                   <a
-                    href="#"
+                    href="resource"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   >
-                    关于我们
+                    Resources
                   </a>
                   <a
-                    href="#"
+                    href="about"
                     className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   >
-                    加入我们
+                    AboutUs
                   </a>
                 </div>
               </div>
