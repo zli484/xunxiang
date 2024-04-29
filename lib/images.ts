@@ -112,8 +112,11 @@ export async function cropImage(
 }
 
 // Given a user, return a recommended path to the user's new profile picture.
-export function profilePictureFileName(userId: string): string {
+export function profilePictureFileName(
+  userId: string,
+  userFirstName: string
+): string {
   const now = new Date().toISOString(); // Expected output: "2023-01-01T12:34:56.000Z"
   const cleanTime = now.split(".")[0].replace(/:/g, "-");
-  return `profile-${userId}-${cleanTime}.jpg`;
+  return `profile-${userFirstName}-${userId}-${cleanTime}.jpg`;
 }
