@@ -6,10 +6,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { type User } from "@prisma/client";
 import { Router } from "next/router";
+import xunxiang from "@/public/img/logo.png";
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
 import type { Database } from "@/types/database.types";
+import Image from "next/image";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
@@ -49,6 +51,8 @@ export default function NavBar() {
       const userData = await response.json();
       setUser(userData);
     }
+
+    getUser();
   }, []);
 
   return (
@@ -59,11 +63,7 @@ export default function NavBar() {
             <div className="flex h-16 justify-between">
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
-                  <img
-                    className="h-8 w-auto"
-                    src="https://zngeyti3xb5dy8sj.public.blob.vercel-storage.com/lara_6-eWp3R6rsyfyEgASspExndEON6Q3cr3.png"
-                    alt="Lara"
-                  />
+                  <Image className="h-8 w-auto" src={xunxiang} alt="Lara" />
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
