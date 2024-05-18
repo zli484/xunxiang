@@ -17,6 +17,7 @@
     "@headlessui/react": "^1.7.18",
     "@heroicons/react": "^2.1.1",
     "@langchain/openai": "^0.0.28",
+    "@next/font": "^14.2.3",
     "@prisma/client": "^5.13.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@tailwindcss/forms": "^0.5.7",

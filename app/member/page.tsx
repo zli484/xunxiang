@@ -25,17 +25,6 @@ export default async function MembersPage() {
     },
   });
 
-  const newUsers = await prisma.user.findMany({
-    where: {
-      NOT: {
-        userId: user?.userId,
-      },
-    },
-    orderBy: {
-      joinedDate: "desc",
-    },
-  });
-
   const allUsers = await prisma.user.findMany();
 
   // Get the userIds of all the users that the currently logged in user has saved

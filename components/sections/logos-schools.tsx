@@ -37,11 +37,11 @@ export default function SchoolLogos() {
   };
 
   return (
-    <div className="bg-white py-3 sm:py-6">
+    <div className="bg-white py-3 sm:py-6 mx-12">
       <div className="mx-auto px-6 lg:px-8">
         <div className="flex">
           <div className="w-1/6">
-            <p className="text-xl font-bold">所在院校</p>
+            <p className="text-xl font-bold">Where Our Members Graduate From</p>
           </div>
           <div className=" w-5/6 mx-auto grid max-w-xl grid-cols-2 lg:grid-cols-6 items-center gap-y-12 sm:gap-y-6 lg:mx-0 lg:max-w-none lg:pl-8 border-l-8">
             {schoolURLs.map((url, index) => (

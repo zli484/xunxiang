@@ -20,14 +20,14 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
         <div className="w-full flex-col items-center">
           <div className="flex justify-center">
             <AspectRatio
-              maxW="400px"
+              maxW="600px"
               ratio={1}
-              className="flex-shrink h-16 w-16 rounded-full"
+              className="flex-shrink h-24 w-24 rounded-full"
             >
               <Image
                 className="rounded-full "
-                width={100}
-                height={100}
+                width={300}
+                height={300}
                 src={
                   user?.profilePictureURL
                     ? user.profilePictureURL
