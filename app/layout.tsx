@@ -6,7 +6,7 @@ import { Montserrat } from "next/font/google";
 import "./globals.css";
 
 import NavBar from "@/components/navbar";
-import { Providers } from "@/components/providers";
+import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
 const lato = Lato({ subsets: ["latin"], weight: "400" });
@@ -25,13 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={lato.className}>
-        <Toaster />
-        <Providers
-          attribute="class"
-          defaultTheme="system"
-          enableSystem={true}
-          disableTransitionOnChange
-        >
+        <Providers>
           <NavBar />
           <main className="flex flex-col flex-1 bg-muted/50">{children}</main>
         </Providers>

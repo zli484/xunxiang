@@ -1,208 +1,96 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import { type User } from "@prisma/client";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import ProfilePictureEditor from "../atoms/profile-picture-editor";
 import Link from "next/link";
 import { Button, Spinner } from "@chakra-ui/react";
+import FormContainer from "@/components/form/FormContainer";
+import TextAreaInput from "@/components/form/TextAreaInput";
+import { updateProfileAction } from "@/utils/actions";
+import { SubmitButton } from "@/components/form/Buttons";
+import FormInput from "@/components/form/FormInput";
+import ImageInputContainer from "@/components/form/ImageInputContainer";
 
+import { updateProfileImageAction } from "@/utils/actions";
 const LINKEDIN_URL_PLACEHOLDER = "https://www.linkedin.com/in/your-handle-here";
 const INSTAGRAM_HANDLE_PLACEHOLDER = "your-handle-here";
 
 export default function EditProfile({ user }: { user: User }) {
-  const router = useRouter();
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  // CAUTION: not formdata, technically just a state object
-  const [formData, setFormData] = useState({
-    userId: user.userId,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    bio: user.bio,
-    linkedInLink: user.linkedInLink,
-    graduationYear: user.graduationYear, // Added field
-    school: user.school, // Added field
-    currentRole: user.currentRole, // Added field, assuming 'role' is the current role
-    currentCompany: user.currentCompany,
-  });
-
-  //   if (!user) {
-  //     router.push("/sign-in");
-  //     router.refresh();
-  //   }
-
-  const handleChange = (e: any) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setLoading(true);
-
-    fetch("/api/user/update", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    }).then(async (res) => {
-      setLoading(false);
-      if (res.status === 200) {
-        toast.success("Profile updated! Redirecting...");
-        setTimeout(() => {
-          router.push("/profile");
-          router.refresh();
-        }, 1000);
-      } else {
-        toast.error(await res.text());
-      }
-    });
-    setLoading(false);
-  };
-
-  return loading ? (
-    <Spinner />
-  ) : (
+  return (
     <div>
       <Link href="/profile" className="tetx-sm m-1 rounded btn btn-xs">
         Go back
       </Link>
-      <div className="w-full flex flex-col p-32">
-        {user && <ProfilePictureEditor user={user} />}
+      <div className="w-1/2 flex flex-col p-32 mx-auto">
+        {/* {user && <ProfilePictureEditor user={user} />} */}
 
-        <form onSubmit={handleSubmit} className="min-w-96">
+        <ImageInputContainer
+          image={user.profilePictureURL ? user.profilePictureURL : ""}
+          name={user.firstName ? user.firstName : ""}
+          action={updateProfileImageAction}
+          text="Update Profile Image"
+        />
+
+        <FormContainer action={updateProfileAction}>
           <div className="grid grid-cols-1 gap-3">
-            <label
-              htmlFor="firstName"
-              className="mt-2 block text-lg font-semibold"
-            >
-              First Name
-            </label>
-            <input
+            <FormInput
               type="text"
               name="firstName"
-              id="firstName"
-              value={formData.firstName ? formData.firstName : ""}
-              onChange={handleChange}
-              className="rounded bg-slate-100 p-2"
-              placeholder="First Name"
-              required
+              label="First Name"
+              defaultValue={user.firstName ? user.firstName : ""}
             />
-            <label
-              htmlFor="lastName"
-              className="mt-2 block text-lg font-semibold"
-            >
-              Last Name
-            </label>
-            <input
+
+            <FormInput
               type="text"
               name="lastName"
-              id="lastName"
-              value={formData.lastName ? formData.lastName : ""}
-              onChange={handleChange}
-              className="rounded bg-slate-100 p-2"
-              placeholder="Last Name"
-              required
+              label="Last Name"
+              defaultValue={user.lastName ? user.lastName : ""}
             />
-            <label htmlFor="bio" className="mt-2 block text-lg font-semibold">
-              Bio
-            </label>
-            <textarea
+
+            <TextAreaInput
               name="bio"
-              id="bio"
-              value={formData.bio ? formData.bio : ""}
-              onChange={handleChange}
-              className="h-60 rounded bg-slate-100 p-2"
-              placeholder="Bio"
-              required
+              labelText="Bio"
+              defaultValue={user.bio ? user.bio : ""}
             />
-            <label
-              htmlFor="linkedIn"
-              className="mt-2 block text-lg font-semibold"
-            >
-              LinkedIn URL
-            </label>
-            <input
+            <FormInput
               type="text"
               name="linkedInLink"
-              id="linkedInLink"
-              value={formData.linkedInLink ? formData.linkedInLink : ""}
-              onChange={handleChange}
-              className="rounded bg-slate-100 p-2"
+              label="LinkedIn URL"
+              defaultValue={user.linkedInLink ? user.linkedInLink : ""}
               placeholder={LINKEDIN_URL_PLACEHOLDER}
             />
-            <label
-              htmlFor="graduationYear"
-              className="mt-2 block text-lg font-semibold"
-            >
-              Graduation Year
-            </label>
-            <input
+            <FormInput
               type="number"
               name="graduationYear"
-              id="graduationYear"
-              value={formData.graduationYear ? formData.graduationYear : ""}
-              onChange={handleChange}
-              className="rounded bg-slate-100 p-2"
-              placeholder="Graduation Year"
+              label="Graduation Year"
+              defaultValue={
+                String(user.graduationYear) ? String(user.graduationYear) : ""
+              }
             />
-            <label
-              htmlFor="school"
-              className="mt-2 block text-lg font-semibold"
-            >
-              School
-            </label>
-            <input
+            <FormInput
               type="text"
               name="school"
-              id="school"
-              value={formData.school ? formData.school : ""}
-              onChange={handleChange}
-              className="rounded bg-slate-100 p-2"
-              placeholder="School"
+              label="School"
+              defaultValue={user.school ? user.school : ""}
             />
-            <label
-              htmlFor="currentRole"
-              className="mt-2 block text-lg font-semibold"
-            >
-              Current Role
-            </label>
-            <input
+            <FormInput
               type="text"
               name="currentRole"
-              id="currentRole"
-              value={formData.currentRole ? formData.currentRole : ""}
-              onChange={handleChange}
-              className="rounded bg-slate-100 p-2"
-              placeholder="Current Role"
+              label="Current Role"
+              defaultValue={user.currentRole ? user.currentRole : ""}
             />
-            <label
-              htmlFor="currentCompany"
-              className="mt-2 block text-lg font-semibold"
-            >
-              Current Company
-            </label>
-            <input
+            <FormInput
               type="text"
               name="currentCompany"
-              id="currentCompany"
-              value={formData.currentCompany ? formData.currentCompany : ""}
-              onChange={handleChange}
-              className="rounded bg-slate-100 p-2"
-              placeholder="Current Company"
+              label="Current Company"
+              defaultValue={user.currentCompany ? user.currentCompany : ""}
             />
-            <Button
-              type="submit"
-              colorScheme="pink"
-              className="mt-6 roundedpx-4 py-2 font-bold text-background"
-            >
-              {loading ? <Spinner /> : "Save changes"}
-            </Button>
+            <SubmitButton text="update profile" className="mt-8" />
           </div>
-        </form>
+        </FormContainer>
       </div>
     </div>
   );
+
+  // );
 }
