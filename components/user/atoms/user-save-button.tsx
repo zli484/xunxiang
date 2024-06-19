@@ -1,5 +1,6 @@
 // SaveButton.tsx
 
+import { CardSubmitButton } from "@/components/form/Buttons";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
@@ -38,16 +39,19 @@ const UserSaveButton: React.FC<SaveButtonProps> = ({
   }
 
   return (
-    <label className="swap">
-      <input
-        className="hidden"
-        type="checkbox"
-        onChange={handleSaveChange}
-        checked={saved}
-      />
-      <i className="fa-regular fa-star fa-lg swap-off"></i>
-      <i className="fa-solid fa-star fa-lg swap-on"></i>
-    </label>
+    <CardSubmitButton isFavorite={isInitiallySaved} />
+
+    // <label className="swap">
+    //   <input
+    //     className="hidden"
+    //     type="checkbox"
+    //     onChange={handleSaveChange}
+    //     checked={saved}
+    //   />
+    //   <i className="fa-regular fa-star fa-lg swap-off"></i>
+
+    //   <i className="fa-solid fa-star fa-lg swap-on"></i>
+    // </label>
   );
 };
 

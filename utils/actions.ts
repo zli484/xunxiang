@@ -47,6 +47,30 @@ const renderError = (error: unknown): { message: string } => {
   };
 };
 
+export const createProfileAction = async (
+  prevState: any,
+  formData: FormData
+) => {
+  try {
+    const user = await getAuthUser();
+    if (!user) throw new Error("Please login to create a profile");
+
+    const rawData = Object.fromEntries(formData);
+    const validatedFields = validateWithZodSchema(UserSchema, rawData);
+
+    console.log("validated fields", validatedFields);
+
+    await db.user.create({
+      data: {
+        ...validatedFields,
+      },
+    });
+  } catch (error) {
+    return renderError(error);
+  }
+  redirect("/");
+};
+
 export const updateProfileAction = async (
   prevState: any,
   formData: FormData
@@ -93,6 +117,53 @@ export const updateProfileImageAction = async (
     });
     revalidatePath("/profile");
     return { message: "Profile image updated successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const fetchFavoriteId = async ({
+  saveReceiverUserId,
+}: {
+  saveReceiverUserId: number;
+}) => {
+  const user = await getAuthUser();
+  const favorite = await db.userSave.findFirst({
+    where: {
+      saveReceiverUserId: saveReceiverUserId,
+      saveInitiatorUserId: user.userId,
+    },
+    select: {
+      id: true,
+    },
+  });
+  return favorite?.id || null;
+};
+
+export const toggleFavoriteAction = async (prevState: {
+  saveReceiverUserId: number;
+  userSaveId: number | null;
+  pathname: string;
+}) => {
+  const user = await getAuthUser();
+  const { saveReceiverUserId, userSaveId, pathname } = prevState;
+  try {
+    if (userSaveId) {
+      await db.userSave.delete({
+        where: {
+          id: userSaveId,
+        },
+      });
+    } else {
+      await db.userSave.create({
+        data: {
+          saveReceiverUserId: saveReceiverUserId,
+          saveInitiatorUserId: user.userId,
+        },
+      });
+    }
+    revalidatePath(pathname);
+    return { message: userSaveId ? "Removed from Faves" : "Added to Faves" };
   } catch (error) {
     return renderError(error);
   }

@@ -1,4 +1,4 @@
-import { UserCard } from "@/components/user/sections/user-card";
+import { UserCard } from "@/components/card/UserCard";
 import { User } from "@prisma/client";
 
 // This section takes a list of users and display them
@@ -15,7 +15,7 @@ export default function UserSection({
   }
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 lg:gap-12 m-3 lg:m-12">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 lg:gap-24 m-3 lg:m-12">
       {users.map((user, index) => {
         return (
           <UserCard

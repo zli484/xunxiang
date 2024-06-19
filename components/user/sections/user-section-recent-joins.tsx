@@ -1,4 +1,4 @@
-import { UserCard } from "@/components/user/sections/user-card";
+import { UserCard } from "@/components/card/UserCard";
 import { User } from "@prisma/client";
 
 // This section takes a list of users and display them

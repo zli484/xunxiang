@@ -24,6 +24,7 @@ import type { Database } from "@/types/database.types";
 import login_bg_img from "@/public/img/sign-in/bg_illustration.png";
 import Image from "next/image";
 import WaitingScreen from "./sign-in-waiting-screen";
+import FormContainer from "@/components/form/FormContainer";
 
 const passwordCriteria = {
   length: false,
@@ -132,7 +133,7 @@ export default function SignInScreen() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="">
+      {/* <div className="">
         <Image
           src={login_bg_img}
           alt="lara_5"
@@ -141,7 +142,7 @@ export default function SignInScreen() {
           objectPosition="center"
           className=" z-0 mx-auto"
         />
-      </div>
+      </div> */}
       <div className=" py-12 px-6 mx-auto space-y-8">
         <form
           className="flex flex-col space-y-8  shadow-lg p-8"
@@ -154,7 +155,9 @@ export default function SignInScreen() {
                 : "Sign in to your account"}
             </p>
           </div>
+
           <div className="space-y-3">
+            <p className="text-4xl text-black">aaaa</p>
             <FormControl id="email">
               <FormLabel>Email address</FormLabel>
               <Input

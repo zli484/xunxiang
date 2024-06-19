@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import prisma from "@/lib/services/prisma";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import CreateProfilePage from "../profile/create/page";
 
 export default async function OnboardingPage() {
   const cookieStore = cookies();
@@ -23,5 +24,7 @@ export default async function OnboardingPage() {
     notFound(); // should never happen
   }
 
-  return <Onboarding user={user} />;
+  return <CreateProfilePage user={user} />;
+
+  // return <Onboarding user={user} />;
 }
