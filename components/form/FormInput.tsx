@@ -7,10 +7,11 @@ type FormInputProps = {
   label?: string;
   defaultValue?: string;
   placeholder?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 function FormInput(props: FormInputProps) {
-  const { label, name, type, defaultValue, placeholder } = props;
+  const { label, name, type, defaultValue, placeholder, onChange } = props;
   return (
     <div className="mb-2">
       <Label htmlFor={name} className="capitalize">
@@ -22,6 +23,7 @@ function FormInput(props: FormInputProps) {
         type={type}
         defaultValue={defaultValue}
         placeholder={placeholder}
+        onChange={onChange}
         required
       />
     </div>

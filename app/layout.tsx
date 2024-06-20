@@ -5,7 +5,7 @@ import { Lato } from "next/font/google";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 
-import NavBar from "@/components/navbar";
+import Navbar from "@/components/navbar/Navbar";
 import { Providers } from "./providers";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -26,7 +26,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={lato.className}>
         <Providers>
-          <NavBar />
+          <Navbar />
           <main className="flex flex-col flex-1 bg-muted/50">{children}</main>
         </Providers>
       </body>

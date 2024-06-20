@@ -25,6 +25,5 @@ function TextAreaInput({ name, labelText, defaultValue }: TextAreaInputProps) {
   );
 }
 
-const tempDefaultDescription =
-  "Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste harum at excepturi dicta! Architecto ad, repudiandae corrupti quae tempore cumque. Ipsum, ab aperiam vel laborum obcaecati eveniet ipsam doloribus delectus!";
+const tempDefaultDescription = "";
 export default TextAreaInput;

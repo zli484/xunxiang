@@ -47,7 +47,7 @@ export async function GET(request: NextRequest) {
     // create a new user
     if (!session?.user?.email) {
       toast.error("Please sign in to continue");
-      return NextResponse.redirect(new URL("/sign-in", requestUrl.origin));
+      return NextResponse.redirect(new URL("/login", requestUrl.origin));
     }
 
     await prisma.user.create({
