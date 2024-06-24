@@ -15,7 +15,7 @@ import { updateProfileImageAction } from "@/utils/actions";
 const LINKEDIN_URL_PLACEHOLDER = "https://www.linkedin.com/in/your-handle-here";
 const INSTAGRAM_HANDLE_PLACEHOLDER = "your-handle-here";
 
-export default function EditProfile({ user }: { user: User }) {
+export default function EditProfileScreen({ user }: { user: User }) {
   return (
     <div>
       <Link href="/profile" className="tetx-sm m-1 rounded btn btn-xs">

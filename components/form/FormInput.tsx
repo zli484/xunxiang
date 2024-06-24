@@ -5,15 +5,23 @@ type FormInputProps = {
   name: string;
   type: string;
   label?: string;
+  visible?: boolean;
   defaultValue?: string;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-function FormInput(props: FormInputProps) {
-  const { label, name, type, defaultValue, placeholder, onChange } = props;
+function FormInput({
+  label,
+  name,
+  type,
+  defaultValue,
+  placeholder,
+  onChange,
+  visible = true, // Set the default value of visible here
+}: FormInputProps) {
   return (
-    <div className="mb-2">
+    <div className="mb-2" style={{ display: visible ? "block" : "none" }}>
       <Label htmlFor={name} className="capitalize">
         {label || name}
       </Label>

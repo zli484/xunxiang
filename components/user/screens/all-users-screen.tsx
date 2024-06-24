@@ -13,6 +13,10 @@ import {
   Icon,
 } from "@chakra-ui/react";
 
+import MembersFilterModal from "@/components/filters/filtersModal";
+import { useDisclosure } from "@chakra-ui/react";
+import { MdOutlineContactMail } from "react-icons/md";
+
 export default function AllUserScreen({
   totalUserCount,
   allUsers,
@@ -22,10 +26,19 @@ export default function AllUserScreen({
   allUsers: User[];
   savedUsersIDs: number[];
 }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   // Render your component with the fetched data
   return (
     <div className="my-24 mx-12">
       <div className="pt-32">
+        <MdOutlineContactMail
+          className="cursor-pointer"
+          onClick={(e) => {
+            e.stopPropagation();
+            onOpen();
+          }}
+        />
+        <MembersFilterModal isOpen={isOpen} onClose={onClose} />
         <UserSection users={allUsers} savedUsersIDs={savedUsersIDs} />
       </div>
       <div className="flex justify-center">{totalUserCount} Members</div>

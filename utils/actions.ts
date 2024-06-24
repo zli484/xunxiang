@@ -11,6 +11,7 @@ import prisma from "@/lib/services/prisma";
 import { revalidatePath } from "next/cache";
 import { uploadImage } from "./supabaseClient";
 import { createClient } from "./supabase/server";
+import { Question } from "@prisma/client";
 
 export const getAuthUser = async () => {
   //   const user = await currentUser();
@@ -132,6 +133,37 @@ export const createProfileAction = async (
   redirect("/member");
 };
 
+export const updateUserBioAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getAuthUser();
+
+  console.log("raw data is", formData);
+
+  if (!user) {
+    return { message: "Please login to update your profile" };
+  }
+
+  try {
+    const bio = formData.get("bio") as string;
+
+    await db.user.update({
+      where: {
+        email: user.email,
+      },
+      data: {
+        bio: bio,
+      },
+    });
+
+    revalidatePath("/profile");
+    return { message: "Profile updated successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
 export const updateProfileAction = async (
   prevState: any,
   formData: FormData
@@ -157,6 +189,79 @@ export const updateProfileAction = async (
 
     revalidatePath("/profile");
     return { message: "Profile updated successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const submitQuestionAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getProfileUser();
+
+  if (!user) {
+    return { message: "Please login to submit a question" };
+  }
+
+  try {
+    console.log("submit question called");
+    const question = formData.get("question") as string;
+    const askedByUserId = user.userId;
+    const askedToUserId = formData.get("askedToUserId") as string;
+    console.log("question is", question);
+    console.log("asked to user id is", askedToUserId);
+
+    // const validatedFields = validateWithZodSchema(questionSchema, { question });
+
+    if (!askedByUserId || !askedToUserId) {
+      throw new Error("Invalid user id");
+    }
+
+    await db.question.create({
+      data: {
+        questionText: question,
+        askedByUserId: askedByUserId,
+        askedToUserId: parseInt(askedToUserId),
+      },
+    });
+
+    revalidatePath("/user");
+    return { message: "Question submitted successfully" };
+  } catch (error) {
+    return renderError(error);
+  }
+};
+
+export const submitAnswerAction = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ message: string }> => {
+  const user = await getProfileUser();
+
+  if (!user) {
+    return { message: "Please login to submit a question" };
+  }
+
+  try {
+    console.log("submit question called");
+    const answer = formData.get("answer") as string;
+    const questionId = formData.get("questionId") as string;
+
+    // const validatedFields = validateWithZodSchema(questionSchema, { question });
+
+    await db.question.update({
+      where: {
+        id: parseInt(questionId),
+      },
+      data: {
+        answerText: answer,
+        answeredAt: new Date(),
+      },
+    });
+
+    revalidatePath("/user");
+    return { message: "Answer submitted successfully" };
   } catch (error) {
     return renderError(error);
   }

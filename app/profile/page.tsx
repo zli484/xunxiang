@@ -1,9 +1,9 @@
 // import { getSession } from "@/lib/supabaseSession";
-import ProfileSelfScreen from "@/components/profile/screens/profile-self-screen";
 import { fetchUserByEmailHelper } from "@/lib/user/helpers";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import prisma from "@/lib/services/prisma";
+import ProfileScreen from "@/components/profile/screens/profileScreen";
 
 export default async function ProfilePage({
   params,
@@ -28,7 +28,7 @@ export default async function ProfilePage({
       userId: user.userId,
     },
   });
-  return <ProfileSelfScreen user={user} userInfoPoints={userInfoPoints} />;
+  return <ProfileScreen isSelf={true} user={user} />;
 
   // return <Profile user={user} isProfileOwner={true} />;
 }

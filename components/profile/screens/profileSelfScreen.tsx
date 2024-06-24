@@ -6,9 +6,10 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 import { Button } from "@chakra-ui/react";
 import Image from "next/image";
 import Link from "next/link";
-import { ConnectPopup } from "@/components/user/sections/connect-popup";
+// import { ConnectPopup } from "@/components/user/sections/connect-popup";
 import { type UserInfoPoint } from "@prisma/client";
 import ProfileSmallCardQA from "../sections/profile-small-card-qa";
+import UserProfileTabs from "@/components/user/sections/userProfileTabs";
 
 export default function ProfileSelfScreen({
   user,
@@ -31,12 +32,7 @@ export default function ProfileSelfScreen({
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         />
 
-        {popupUser && (
-          <ConnectPopup
-            user={popupUser}
-            closePopup={() => setPopupUser(null)}
-          />
-        )}
+        <UserProfileTabs />
         <div className="flex flex-col w-full bg-white">
           <div className="self-end p-6">
             {" "}

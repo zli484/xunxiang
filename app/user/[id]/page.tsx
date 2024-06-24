@@ -1,10 +1,10 @@
 // import { getSession } from "@/lib/supabaseSession";
-import ProfileOtherUserScreen from "@/components/screens/profile-other-user-screen";
 import prisma from "@/lib/services/prisma";
 import { notFound } from "next/navigation";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { fetchUserByEmailHelper } from "@/lib/user/helpers";
+import ProfileScreen from "@/components/profile/screens/profileScreen";
 
 export default async function ProfileOtherUsersPage({
   params,
@@ -40,5 +40,5 @@ export default async function ProfileOtherUsersPage({
 
   // If there exists a chat between loggedInUser and user, then use that chat
 
-  return <ProfileOtherUserScreen user={user} />;
+  return <ProfileScreen isSelf={false} user={user} />;
 }
