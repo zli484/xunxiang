@@ -6,7 +6,9 @@ export default function EditProfileButton() {
     <div>
       {" "}
       <a href="/profile/edit" className="m-1">
-        <Button>Edit Profile</Button>
+        <Button size={"sm"} variant={"outline"}>
+          Edit Profile
+        </Button>
       </a>
     </div>
   );

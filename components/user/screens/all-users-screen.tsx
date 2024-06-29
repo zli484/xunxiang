@@ -29,18 +29,17 @@ export default function AllUserScreen({
   const { isOpen, onOpen, onClose } = useDisclosure();
   // Render your component with the fetched data
   return (
-    <div className="my-24 mx-12">
-      <div className="pt-32">
-        <MdOutlineContactMail
+    <div className="my-6 mx-12">
+      {/* <MdOutlineContactMail
           className="cursor-pointer"
           onClick={(e) => {
             e.stopPropagation();
             onOpen();
           }}
         />
-        <MembersFilterModal isOpen={isOpen} onClose={onClose} />
-        <UserSection users={allUsers} savedUsersIDs={savedUsersIDs} />
-      </div>
+        <MembersFilterModal isOpen={isOpen} onClose={onClose} /> */}
+      <UserSection users={allUsers} savedUsersIDs={savedUsersIDs} />
+
       <div className="flex justify-center">{totalUserCount} Members</div>
     </div>
   );

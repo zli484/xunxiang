@@ -1,4 +1,4 @@
-import { UserCard } from "@/components/card/UserCard";
+import { UserCard } from "../atoms/UserCard";
 import { User } from "@prisma/client";
 
 // This section takes a list of users and display them

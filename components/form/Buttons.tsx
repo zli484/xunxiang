@@ -12,12 +12,52 @@ type SubmitButtonProps = {
   className?: string;
   text?: string;
   size?: btnSize;
+  isLoading?: boolean;
+  variant?:
+    | "default"
+    | "secondary"
+    | "destructive"
+    | "outline"
+    | "ghost"
+    | "link";
+
+  onClick?: () => void;
 };
+
+export function BasicButton({
+  className = "",
+  text = "submit",
+  size = "lg",
+  isLoading = false,
+  variant = "default",
+  onClick,
+}: SubmitButtonProps) {
+  const { pending } = useFormStatus();
+  return (
+    <Button
+      type="button"
+      className={`capitalize ${className} `}
+      variant={variant}
+      size={size}
+      onClick={onClick}
+    >
+      {isLoading ? (
+        <>
+          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+          Please wait...
+        </>
+      ) : (
+        text
+      )}
+    </Button>
+  );
+}
 
 export function SubmitButton({
   className = "",
   text = "submit",
   size = "lg",
+  onClick,
 }: SubmitButtonProps) {
   const { pending } = useFormStatus();
 
@@ -27,6 +67,7 @@ export function SubmitButton({
       disabled={pending}
       className={`capitalize ${className} `}
       size={size}
+      onClick={onClick}
     >
       {pending ? (
         <>

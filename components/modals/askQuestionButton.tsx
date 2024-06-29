@@ -9,7 +9,7 @@ export default function AskQuestionButton({ user }: { user: User }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (
     <div>
-      <div className="flex justify-between items-center px-4 py-2">
+      <div className="flex justify-between items-center px-4">
         <Button onClick={onOpen} size="sm">
           Ask a Question
         </Button>

@@ -19,13 +19,11 @@ export default function ProfileScreen({
 }) {
   return (
     <>
-      <>
-        {isSelf && <EditProfileButton />}
-        <Tabs defaultValue="basicInfo" className="flex">
+      <div className="h-screen">
+        <Tabs defaultValue="basicInfo" className="flex flex-col">
           <div className="flex items-center">
-            <TabsList className="">
+            <TabsList className="m-12">
               <TabsTrigger value="basicInfo">Info</TabsTrigger>
-              <TabsTrigger value="bio">Bio</TabsTrigger>
               <TabsTrigger value="questions">Quesions</TabsTrigger>
             </TabsList>
           </div>
@@ -33,12 +31,11 @@ export default function ProfileScreen({
             <TabsContent value="basicInfo">
               <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6">
                 <BasicInfoCard isSelf={isSelf} user={user} />
+                <BioCard isSelf={isSelf} user={user} />
               </div>
             </TabsContent>
             <TabsContent value="bio">
-              <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6">
-                <BioCard user={user} />
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6"></div>
             </TabsContent>
           </div>
         </Tabs>
@@ -49,7 +46,7 @@ export default function ProfileScreen({
             <BioCard user={user} />
           </div>
         </div> */}
-      </>
+      </div>
     </>
   );
 }
