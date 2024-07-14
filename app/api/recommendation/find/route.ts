@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, Prisma, User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { vectorStore } from "@/lib/vector/vectorstore";
 
 export async function POST(req: Request) {
