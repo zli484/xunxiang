@@ -1,7 +1,4 @@
-import { UserCard } from "@/components/user/sections/user-card";
-import { User } from "@prisma/client";
 import illustration_1 from "@/public/img/profile/work.svg";
-
 import Image from "next/image";
 import { type UserInfoPoint } from "@prisma/client";
 import { Switch } from "@chakra-ui/react";

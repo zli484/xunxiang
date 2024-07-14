@@ -1,10 +1,8 @@
-import Image from "next/image";
-import HomeScreen from "@/components/screens/home";
-
+import HomeScreenNew from "@/components/screens/home-new";
 export default function Home() {
   return (
     <div>
-      <HomeScreen />
+      <HomeScreenNew />
     </div>
   );
 }

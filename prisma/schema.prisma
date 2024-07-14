@@ -252,6 +252,21 @@ model UserInfoPointImage {
   @@map("images")
 }
 
+
+
+model Question {
+  id      Int      @id @default(autoincrement())
+  questionText String
+  askedByUserId Int
+  askedToUserId Int
+  createdAt DateTime @default(now())
+  answered Boolean @default(false)
+  answerText String?
+  answeredAt DateTime?
+
+    @@map("questions")
+}
+
 enum ChatType {
   SELF_AGENT
   OTHERS_AGENT

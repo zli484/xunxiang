@@ -15,7 +15,7 @@ export default async function User() {
   console.log("session from user page", session);
 
   if (!session) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const user = await prisma.user.findUnique({
@@ -51,10 +51,6 @@ export default async function User() {
   });
 
   const savedUserIds = userSaves.map((userSave) => userSave.saveReceiverUserId);
-
-  // if (!session) {
-  //   redirect("/sign-in");
-  // }
 
   return (
     <UserScreen

@@ -3,13 +3,7 @@ import { Configuration, OpenAIApi, OpenAIFile } from "openai-edge";
 import { DEFAULT_CHAT_MODEL, DEFAULT_EMBEDDING_MODEL } from "./constants";
 import { type User } from "@prisma/client";
 
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-  baseURL: "https://oai.hconeai.com/v1",
-  defaultHeaders: {
-    "Helicone-Auth": `Bearer ${process.env.HELICONE_API_KEY}`,
-  },
-});
+export const openai = new OpenAI();
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,

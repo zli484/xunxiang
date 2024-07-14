@@ -1,29 +1,16 @@
-// File: components/UserContactInfoModal.tsx
-
 import { User } from "@prisma/client";
-
+import Image from "next/image";
 import wechat_icon from "@/public/icons/icon-wechat.svg";
 import email_icon from "@/public/icons/icon-email.png";
-import Image from "next/image";
 import {
-  Card,
-  Stack,
-  Button,
-  Heading,
-  CardBody,
-  Text,
-  Box,
-  StackDivider,
-} from "@chakra-ui/react";
-import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-} from "@chakra-ui/react";
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface UserContactInfoModalProps {
   isOpen: boolean;
@@ -37,34 +24,35 @@ const UserContactInfoModal: React.FC<UserContactInfoModalProps> = ({
   user,
 }) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Contact Info</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
-          <Card className="flex justify-en m-6">
-            <CardBody>
-              <Stack divider={<StackDivider />} spacing="4">
-                <Box>
-                  <Heading size="xs" textTransform="uppercase">
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogTrigger asChild>
+        <div />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Contact Info</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>
+          <div className="flex justify-en m-6">
+            <div className="p-4">
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-xs uppercase">
                     <span>
                       <Image
                         src={email_icon}
-                        alt="WeChat"
+                        alt="Email"
                         width={20}
                         height={20}
                         className="inline mr-2"
                       />
                       Email
                     </span>
-                  </Heading>
-                  <Text pt="2" fontSize="sm">
-                    {user.email}
-                  </Text>
-                </Box>
-                <Box>
-                  <Heading size="xs" textTransform="uppercase">
+                  </h2>
+                  <p className="pt-2 text-sm">{user.email}</p>
+                </div>
+                <div>
+                  <h2 className="text-xs uppercase">
                     <span>
                       <Image
                         src={wechat_icon}
@@ -75,17 +63,15 @@ const UserContactInfoModal: React.FC<UserContactInfoModalProps> = ({
                       />
                       WeChat
                     </span>
-                  </Heading>
-                  <Text pt="2" fontSize="sm">
-                    {user.wechatId}
-                  </Text>
-                </Box>
-              </Stack>
-            </CardBody>
-          </Card>
-        </ModalBody>
-      </ModalContent>
-    </Modal>
+                  </h2>
+                  <p className="pt-2 text-sm">{user.wechatId}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </DialogDescription>
+      </DialogContent>
+    </Dialog>
   );
 };
 

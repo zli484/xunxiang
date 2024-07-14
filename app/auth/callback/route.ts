@@ -45,11 +45,15 @@ export async function GET(request: NextRequest) {
 
   if (!user) {
     // create a new user
+
+    console.log("could not find the user from prisma ");
     if (!session?.user?.email) {
+      console.log("entered the if statement");
       toast.error("Please sign in to continue");
-      return NextResponse.redirect(new URL("/sign-in", requestUrl.origin));
+      return NextResponse.redirect(new URL("/login", requestUrl.origin));
     }
 
+    console.log("creating a new user for", session?.user?.email);
     await prisma.user.create({
       data: {
         email: session?.user?.email,
@@ -57,6 +61,7 @@ export async function GET(request: NextRequest) {
       },
     });
 
+    console.log("right before the return statement");
     return NextResponse.redirect(new URL("/onboarding", requestUrl.origin));
   }
 

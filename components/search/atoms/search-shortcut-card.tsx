@@ -1,4 +1,5 @@
 import { Button } from "@chakra-ui/react";
+import { BasicButton } from "@/components/form/Buttons";
 
 export default function SearchShortcutCard({
   text,
@@ -9,15 +10,12 @@ export default function SearchShortcutCard({
 }) {
   return (
     <div>
-      <Button
-        bg={"pink.50"}
-        color={"pink.300"}
+      <BasicButton
         size={"sm"}
-        variant={"outline"}
+        variant="outline"
         onClick={() => setInput(text)}
-      >
-        {text}
-      </Button>
+        text={text}
+      ></BasicButton>
     </div>
   );
 }

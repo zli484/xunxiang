@@ -1,4 +1,4 @@
-import EditProfile from "@/components/profile/screens/edit-profile-screen";
+import EditProfileScreen from "@/components/profile/screens/EditProfileScreen";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { fetchUserByEmailHelper } from "@/lib/user/helpers";
@@ -17,5 +17,5 @@ export default async function EditProfilePage() {
     throw new Error("User not found");
   }
 
-  return <EditProfile user={user} />;
+  return <EditProfileScreen user={user} />;
 }

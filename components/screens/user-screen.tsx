@@ -1,20 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Textarea } from "@chakra-ui/react";
+import { Textarea } from "../ui/textarea";
+import { Button } from "@chakra-ui/react";
 import { User } from "@prisma/client";
 import UserSection from "@/components/user/sections/user-section";
+import { SubmitButton } from "../form/Buttons";
 import UserSectionRecentJoins from "../user/sections/user-section-recent-joins";
 import { PhoneIcon, AddIcon, WarningIcon, SearchIcon } from "@chakra-ui/icons";
-import {
-  Button,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Icon,
-} from "@chakra-ui/react";
+
 import LaraChatBubble from "../core-ui/lara-chat-bubble";
 import SearchShotcutCardSection from "../search/sections/search-card-section";
+import { BasicButton } from "../form/Buttons";
 
 const randomDescriptions = [
   "喜欢美食", // likes gourmet food
@@ -163,61 +160,27 @@ export default function UserScreen({
         <div className="flex flex-col justify-center items-center w-full lg:w-3/4">
           <div className="w-full">
             <Textarea
-              focusBorderColor="pink.100"
               value={description}
               onChange={handleChange}
               placeholder="Search in either English or Chinese, e.g., 'People who enjoy art'"
-              size="lg"
               rows={3}
             />
 
             <SearchShotcutCardSection setInput={setInput} />
-            {/* <InputGroup className="flex items-center">
-              <Input
-                className="shadow-md"
-                height={16}
-                rounded={"full"}
-                value={description}
-                onChange={handleChange}
-                placeholder="Search in either English or Chinese, e.g., 'People who enjoy art'"
-                size="lg"
-              />
-            </InputGroup> */}
           </div>
-          <div className="flex justify-center mt-12 w-1/3">
-            <Button
-              size={"sm"}
-              className="shrink-0"
+          <div className="flex justify-center w-32 mt-12 space-x-6">
+            <BasicButton
+              size="lg"
+              text={"Search"}
               isLoading={isLoadingButton1}
               onClick={findUsersByDescription}
-              colorScheme="pink"
-              ml={2}
-            >
-              Search
-            </Button>
-            <Button
-              size={"sm"}
-              className="shrink-0"
+            />
+            <BasicButton
+              size="lg"
+              text={"Random"}
               isLoading={isLoadingButton2}
               onClick={findRandomUser}
-              colorScheme="pink"
-              ml={2}
-            >
-              🍀 Feeling Lucky
-            </Button>
-
-            {/* {users.length !== 0 && (
-              <Button
-                size={"sm"}
-                className="shrink-0"
-                onClick={getLaraRecommendation}
-                colorScheme="pink"
-                ml={2}
-                isDisabled={users.length === 0}
-              >
-                Get Recommendation
-              </Button>
-            )} */}
+            />
           </div>
         </div>
       </div>
@@ -230,15 +193,6 @@ export default function UserScreen({
         <UserSection users={users} savedUsersIDs={savedUsersIDs} />
       </div>
       <div className="flex justify-center">{totalUserCount} Members</div>
-
-      {users.length == 0 ? (
-        <div className="m-3 lg:m-12">
-          <p className="font-thin">Recently Joined Users</p>
-          <UserSectionRecentJoins users={newUsers} />
-        </div>
-      ) : (
-        <div></div>
-      )}
     </div>
   );
 }

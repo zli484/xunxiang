@@ -68,39 +68,13 @@ export default function NavBar() {
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
                   <a
-                    href="/user"
-                    className="inline-flex items-center  border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
-                  >
-                    Discover
-                  </a>
-                </div>
-                <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                  {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                  <a
                     href="/recommended"
                     className="inline-flex items-center border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
                   >
                     Recommended
                   </a>
                 </div>
-                <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                  {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                  <a
-                    href="/communities"
-                    className="inline-flex items-center border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
-                  >
-                    Communities
-                  </a>
-                </div>
-                <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                  {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
-                  <a
-                    href="/activities"
-                    className="inline-flex items-center border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
-                  >
-                    Activities
-                  </a>
-                </div>
+
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
                   {/* Current: "border-indigo-500 text-gray-900", Default: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700" */}
                   <a
@@ -182,7 +156,7 @@ export default function NavBar() {
                             <button
                               onClick={() => {
                                 supabase.auth.signOut();
-                                router.push("/sign-in");
+                                router.push("/login");
                               }}
                               className={classNames(
                                 active ? "bg-gray-100" : "",

@@ -38,7 +38,7 @@ export default function Feature() {
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:mx-0">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            All you need to have an amazing 20s' experience
+            All you need to have an amazing 20s experience
           </h2>
           <p className="mt-6 text-lg leading-8 text-gray-600">
             Lorem ipsum dolor sit amet consect adipisicing elit. Possimus magnam
@@ -57,12 +57,6 @@ export default function Feature() {
                   />
                 </AspectRatio>
                 <dt className=" mt-12 text-3xl font-semibold leading-7 text-gray-900">
-                  {/* <div className="mb-6 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-600">
-                    <feature.icon
-                      className="h-6 w-6 text-white"
-                      aria-hidden="true"
-                    />
-                  </div> */}
                   {feature.name}
                 </dt>
                 <dd className="mt-1 flex flex-auto flex-col text-base leading-7 text-gray-600">

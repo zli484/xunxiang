@@ -87,19 +87,16 @@ export default function CompanyLogos() {
   return (
     <div className="bg-white py-3 sm:py-6 mx-12">
       <div className="mx-auto px-6 lg:px-8">
-        <div className="flex">
-          <div className="w-1/6">
-            <p className="text-xl font-bold">Where Our Members Work At</p>
-          </div>
-          <div className="w-5/6 mx-auto grid max-w-xl grid-cols-2 lg:grid-cols-6 items-center gap-y-12 sm:gap-y-6 lg:mx-0 lg:max-w-none lg:pl-8 border-l-8">
+        <div className="flex flex-col">
+          <div className="mx-auto grid max-w-xl grid-cols-2 lg:grid-cols-6 items-center gap-y-12 sm:gap-y-6 lg:mx-0 lg:max-w-none ">
             {companyURLs.map((url, index) => (
               <img
                 key={index}
                 className="max-h-full max-w-full object-contain"
                 src={url}
                 alt={getAltText(url)} // Dynamically generate alt text
-                width={100} // You may want to adjust these statically set values
-                height={48} // depending on your layout needs or image aspect ratios
+                width={50} // You may want to adjust these statically set values
+                height={24} // depending on your layout needs or image aspect ratios
               />
             ))}
           </div>

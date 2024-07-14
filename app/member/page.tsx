@@ -16,7 +16,7 @@ export default async function MembersPage() {
   console.log("session from user page", session);
 
   if (!session) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const user = await prisma.user.findUnique({
@@ -40,10 +40,6 @@ export default async function MembersPage() {
   });
 
   const savedUserIds = userSaves.map((userSave) => userSave.saveReceiverUserId);
-
-  // if (!session) {
-  //   redirect("/sign-in");
-  // }
 
   return (
     <AllUserScreen
