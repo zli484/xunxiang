@@ -23,7 +23,12 @@ export default async function OnboardingPage() {
   //   redirect(`/onboarding`);
   // }
 
-  return <CreateProfilePage />;
+  const user = await getProfileUser();
+  // if (!user) {
+  //   return notFound();
+  // }
+
+  return <CreateProfilePage user={user ? user : undefined} />;
 
   // return <Onboarding user={user} />;
 }

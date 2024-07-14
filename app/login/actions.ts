@@ -52,7 +52,7 @@ export async function signup(prevState: any, formData: FormData) {
   }
 
   revalidatePath("/", "layout");
-  redirect("/login");
+  redirect("/login/waiting");
 
   return { message: "Signed up successfully" };
 }

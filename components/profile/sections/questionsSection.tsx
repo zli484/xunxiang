@@ -8,10 +8,6 @@ export default async function QuestionsSection({ userId }: { userId: number }) {
     },
   });
 
-  // fetch all questions asked to the user
-  // display them in a list
-  // if no questions asked, display a message
-
   return (
     <div>
       <h1>Questions</h1>

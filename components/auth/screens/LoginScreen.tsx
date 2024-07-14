@@ -18,6 +18,7 @@ import PasswordValidityBox from "@/components/atoms/passwordValidityBox";
 import { SubmitButton } from "@/components/form/Buttons";
 import { Flex, Stack, Text } from "@chakra-ui/react";
 import Link from "next/link";
+import WaitingScreen from "./sign-in-waiting-screen";
 
 const passwordCriteria = {
   length: false,
@@ -34,6 +35,7 @@ export default function LoginScreen({}: {}) {
   const [showPasswordRequirements, setShowPasswordRequirements] =
     useState(false);
   const [isSigningUp, setIsSigningUp] = useState<boolean>(true); // State to toggle between sign in and sign up
+  const [showWaitingPage, setShowWaitingPage] = useState<boolean>(false);
 
   const updatePasswordValidity = (password: string) => {
     const length = password.length >= 8;
@@ -51,6 +53,10 @@ export default function LoginScreen({}: {}) {
     if (!showPasswordRequirements) setShowPasswordRequirements(true); // Show requirements when the user starts typing
     updatePasswordValidity(newPassword);
   };
+
+  if (showWaitingPage) {
+    return <WaitingScreen onBack={() => setShowWaitingPage(false)} />;
+  }
 
   return (
     <section className="h-[calc(100vh-57px)] flex justify-center items-center">

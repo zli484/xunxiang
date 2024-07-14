@@ -24,7 +24,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={lato.className}>
+      <body className={inter.className}>
         <Providers>
           <Navbar />
           <main className="flex flex-col flex-1 bg-muted/50">{children}</main>

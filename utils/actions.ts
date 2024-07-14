@@ -12,11 +12,10 @@ import { revalidatePath } from "next/cache";
 import { uploadImage } from "./supabaseClient";
 import { createClient } from "./supabase/server";
 import { Question } from "@prisma/client";
+import { getEmbedding } from "@/lib/apiUtils";
 
 export const getAuthUser = async () => {
   //   const user = await currentUser();
-
-  console.log("getting auth user");
 
   const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
@@ -30,8 +29,6 @@ export const getAuthUser = async () => {
 
 export const getProfileUser = async () => {
   //   const user = await currentUser();
-
-  console.log("getting auth user");
 
   const supabase = createClient();
   const { data, error } = await supabase.auth.getUser();
@@ -113,10 +110,16 @@ export const createProfileAction = async (
   formData: FormData
 ) => {
   try {
+    const cookieStore = cookies();
+    const supabase = createServerComponentClient({
+      cookies: () => cookieStore,
+    });
+
     const user = await getAuthUser();
     if (!user) throw new Error("Please login to create a profile");
 
     const rawData = Object.fromEntries(formData);
+    //@ts-ignore
     const validatedFields = validateWithZodSchema(UserSchema, rawData);
 
     console.log("validated fields", validatedFields);
@@ -127,6 +130,20 @@ export const createProfileAction = async (
         ...validatedFields,
       },
     });
+
+    let bio = formData.get("bio") as string;
+
+    let bioEmbedding;
+    if (bio) {
+      bioEmbedding = await getEmbedding(bio);
+    }
+
+    const { error } = await supabase
+      .from("users")
+      .update({
+        bioEmbedding: bioEmbedding,
+      })
+      .eq("email", user.email);
   } catch (error) {
     return renderError(error);
   }
@@ -138,6 +155,8 @@ export const updateUserBioAction = async (
   formData: FormData
 ): Promise<{ message: string }> => {
   const user = await getAuthUser();
+  const cookieStore = cookies();
+  const supabase = createServerComponentClient({ cookies: () => cookieStore });
 
   console.log("raw data is", formData);
 
@@ -147,6 +166,18 @@ export const updateUserBioAction = async (
 
   try {
     const bio = formData.get("bio") as string;
+
+    let bioEmbedding;
+    if (bio) {
+      bioEmbedding = await getEmbedding(bio);
+    }
+
+    const { error } = await supabase
+      .from("users")
+      .update({
+        bioEmbedding: bioEmbedding,
+      })
+      .eq("email", user.email);
 
     await db.user.update({
       where: {
@@ -178,13 +209,16 @@ export const updateProfileAction = async (
 
   try {
     const rawData = Object.fromEntries(formData);
+    //@ts-ignore
     const validatedFields = validateWithZodSchema(UserSchema, rawData);
 
     await db.user.update({
       where: {
         email: user.email,
       },
-      data: validatedFields,
+      data: {
+        ...validatedFields,
+      },
     });
 
     revalidatePath("/profile");

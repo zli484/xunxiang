@@ -15,7 +15,7 @@ export default function UserSection({
   }
 
   return (
-    <div className="grid grid-cols-1 xl:grid-cols-3 gap-3 lg:gap-6 m-3 lg:m-12">
+    <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 lg:gap-1 m-3 lg:m-12">
       {users.map((user, index) => {
         return (
           <UserCard

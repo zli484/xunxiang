@@ -1,5 +1,3 @@
-"use client";
-
 import { Toaster } from "@/components/ui/toaster";
 import * as React from "react";
 import { ThemeProvider as NextThemesProvider } from "next-themes";

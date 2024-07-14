@@ -23,6 +23,31 @@ export const UserSchema = z.object({
   bio: z.string().max(200, {
     message: "Bio must be at most 200 characters long",
   }),
+  linkedInLink: z.string().max(200, {
+    message: "LinkedIn URL must be at most 200 characters long",
+  }),
+  graduationYear: z
+    .string()
+    .refine(
+      (val) => {
+        const num = Number(val);
+        return !isNaN(num) && Number.isInteger(num);
+      },
+      {
+        message: "Graduation Year must be a valid integer",
+      }
+    )
+    .transform((val) => Number(val)),
+
+  school: z.string().max(200, {
+    message: "School must be at most 200 characters long",
+  }),
+  currentRole: z.string().max(200, {
+    message: "Current Role must be at most 200 characters long",
+  }),
+  currentCompany: z.string().max(200, {
+    message: "Current Company must be at most 200 characters long",
+  }),
 });
 
 export function validateWithZodSchema<T>(

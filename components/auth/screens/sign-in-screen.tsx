@@ -86,6 +86,7 @@ export default function SignInScreen() {
       },
     });
     setLoading(false);
+    setShowWaitingPage(true);
 
     if (error) {
       toast({
@@ -98,8 +99,6 @@ export default function SignInScreen() {
     } else {
       setShowWaitingPage(true);
     }
-
-    // router.refresh();
   };
 
   const handleSignIn = async () => {
@@ -130,6 +129,8 @@ export default function SignInScreen() {
   };
 
   if (showWaitingPage) {
+    console.log("showWaitingPage is true");
+    alert("showWaitingPage is true");
     return <WaitingScreen onBack={() => setShowWaitingPage(false)} />;
   }
 

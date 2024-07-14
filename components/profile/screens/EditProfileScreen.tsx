@@ -63,9 +63,7 @@ export default function EditProfileScreen({ user }: { user: User }) {
               type="number"
               name="graduationYear"
               label="Graduation Year"
-              defaultValue={
-                String(user.graduationYear) ? String(user.graduationYear) : ""
-              }
+              defaultValue={user.graduationYear ? user.graduationYear : ""}
             />
             <FormInput
               type="text"
