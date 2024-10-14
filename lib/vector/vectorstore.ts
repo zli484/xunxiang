@@ -19,7 +19,7 @@ export const vectorStore = PrismaVectorStore.withModel<User>(db).create(
     tableName: "users",
     vectorColumnName: "bioEmbedding",
     columns: {
-      userId: PrismaVectorStore.IdColumn,
+      id: PrismaVectorStore.IdColumn,
       bio: PrismaVectorStore.ContentColumn,
     },
   }
@@ -37,7 +37,7 @@ export const vectorStoreSelfDescription = PrismaVectorStore.withModel<User>(
     tableName: "user_details",
     vectorColumnName: "selfDescriptionEmbedding",
     columns: {
-      userId: PrismaVectorStore.IdColumn,
+      id: PrismaVectorStore.IdColumn,
       selfDescription: PrismaVectorStore.ContentColumn,
     },
   }
@@ -55,7 +55,7 @@ export const vectorStorePastExperience = PrismaVectorStore.withModel<User>(
     tableName: "user_details",
     vectorColumnName: "pastExperienceEmbedding",
     columns: {
-      userId: PrismaVectorStore.IdColumn,
+      id: PrismaVectorStore.IdColumn,
       pastExperience: PrismaVectorStore.ContentColumn,
     },
   }
@@ -72,7 +72,7 @@ export const vectorStoreInterestsAndPassions =
       tableName: "user_details",
       vectorColumnName: "interestsAndPassionsEmbedding",
       columns: {
-        userId: PrismaVectorStore.IdColumn,
+        id: PrismaVectorStore.IdColumn,
         interestsAndPassions: PrismaVectorStore.ContentColumn,
       },
     }
@@ -90,7 +90,7 @@ export const vectorStoreGoalsAndDreams = PrismaVectorStore.withModel<User>(
     tableName: "user_details",
     vectorColumnName: "goalsAndDreamsEmbedding",
     columns: {
-      userId: PrismaVectorStore.IdColumn,
+      id: PrismaVectorStore.IdColumn,
       goalsAndDreams: PrismaVectorStore.ContentColumn,
     },
   }
@@ -108,7 +108,7 @@ export const vectorStoreCurrentStatus = PrismaVectorStore.withModel<User>(
     tableName: "user_details",
     vectorColumnName: "currentStatusEmbedding",
     columns: {
-      userId: PrismaVectorStore.IdColumn,
+      id: PrismaVectorStore.IdColumn,
       currentStatus: PrismaVectorStore.ContentColumn,
     },
   }
@@ -126,7 +126,7 @@ export const vectorStoreValueAndBelief = PrismaVectorStore.withModel<User>(
     tableName: "user_details",
     vectorColumnName: "valueAndBeliefEmbedding",
     columns: {
-      userId: PrismaVectorStore.IdColumn,
+      id: PrismaVectorStore.IdColumn,
       valueAndBelief: PrismaVectorStore.ContentColumn,
     },
   }
@@ -144,7 +144,7 @@ export const vectorStoreAdditional = PrismaVectorStore.withModel<User>(
     tableName: "user_details",
     vectorColumnName: "additionalEmbedding",
     columns: {
-      userId: PrismaVectorStore.IdColumn,
+      id: PrismaVectorStore.IdColumn,
       additional: PrismaVectorStore.ContentColumn,
     },
   }

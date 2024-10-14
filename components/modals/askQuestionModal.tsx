@@ -12,13 +12,13 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import FormContainer from "../form/FormContainer";
 import TextAreaInput from "../form/TextAreaInput";
-import { submitQuestionAction } from "@/utils/actions";
+// import { submitQuestionAction } from "@/utils/actions";
 import FormInput from "../form/FormInput";
 
 interface AskQuestionProps {
   isOpen: boolean;
   onClose: () => void;
-  askedToUserId?: number;
+  askedToUserId?: string;
 }
 
 const AskQuestionModal: React.FC<AskQuestionProps> = ({
@@ -38,7 +38,7 @@ const AskQuestionModal: React.FC<AskQuestionProps> = ({
           <DialogTitle>Ask A Question</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          <FormContainer action={submitQuestionAction}>
+          {/* <FormContainer action={submitQuestionAction}>
             <TextAreaInput
               name="question"
               labelText="Question"
@@ -51,7 +51,7 @@ const AskQuestionModal: React.FC<AskQuestionProps> = ({
                 Send Question
               </Button>
             </div>
-          </FormContainer>
+          </FormContainer> */}
         </DialogDescription>
         <DialogFooter>
           {/* Add any buttons or additional footer content here */}

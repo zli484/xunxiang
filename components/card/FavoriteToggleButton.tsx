@@ -7,7 +7,7 @@ import FavoriteToggleForm from "./FavoriteToggleForm";
 async function FavoriteToggleButton({
   saveReceiverUserId,
 }: {
-  saveReceiverUserId: number;
+  saveReceiverUserId: string;
 }) {
   const { userId } = auth();
   if (!userId) return <CardSignInButton />;
@@ -15,7 +15,7 @@ async function FavoriteToggleButton({
   return (
     <FavoriteToggleForm
       saveReceiverUserId={saveReceiverUserId}
-      userSaveId={saveId}
+      userSaveId={saveId ? saveId.toString() : null}
     />
   );
 }

@@ -30,7 +30,7 @@ export default async function ProfileOtherUsersPage({
   // Retrieve user and chat
   const user = await prisma.user.findUnique({
     where: {
-      userId: Number(params.id),
+      id: params.id,
     },
   });
 

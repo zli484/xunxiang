@@ -23,11 +23,6 @@ export default async function ProfilePage({
     throw new Error("User not found");
   }
 
-  const userInfoPoints = await prisma.userInfoPoint.findMany({
-    where: {
-      userId: user.userId,
-    },
-  });
   return <ProfileScreen isSelf={true} user={user} />;
 
   // return <Profile user={user} isProfileOwner={true} />;

@@ -1,6 +1,6 @@
 import illustration_1 from "@/public/img/profile/work.svg";
 import Image from "next/image";
-import { type UserInfoPoint } from "@prisma/client";
+// import { type UserInfoPoint } from "@prisma/client";
 import { Switch } from "@chakra-ui/react";
 
 // This section takes a list of users and display them
@@ -8,7 +8,7 @@ import { Switch } from "@chakra-ui/react";
 export default function ProfileSmallCardQA({
   userInfoPoint,
 }: {
-  userInfoPoint: UserInfoPoint;
+  userInfoPoint: any;
 }) {
   return (
     <div className="flex flex-col min-h-96 aspect-square w-full bg-slate-50 border-2 border-slate-100 justify-between rounded-2xl">

@@ -8,7 +8,7 @@ export default function UserSectionRecentJoins({
   savedUsersIDs = [],
 }: {
   users: Array<User>;
-  savedUsersIDs?: Array<number>;
+  savedUsersIDs?: Array<string>;
 }) {
   if (!users) {
     return <div>No users found</div>;
@@ -21,7 +21,7 @@ export default function UserSectionRecentJoins({
           <UserCard
             key={index}
             user={user}
-            isSaved={savedUsersIDs.includes(user.userId)}
+            isSaved={savedUsersIDs.includes(user.id)}
           />
         );
       })}

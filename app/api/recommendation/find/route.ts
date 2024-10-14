@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { PrismaClient, Prisma, User } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { vectorStore } from "@/lib/vector/vectorstore";
 
 export async function POST(req: Request) {
@@ -24,14 +24,14 @@ export async function POST(req: Request) {
 
   const users = await db.user.findMany({
     where: {
-      userId: {
+      id: {
         in: userIds,
       },
     },
   });
 
   // Create a map of userId to user object for quick lookup
-  const userIdToUserMap = new Map(users.map((user) => [user.userId, user]));
+  const userIdToUserMap = new Map(users.map((user) => [user.id, user]));
 
   // Reorder users based on the order of userIds
   const orderedUsers = userIds.map((userId) => userIdToUserMap.get(userId));

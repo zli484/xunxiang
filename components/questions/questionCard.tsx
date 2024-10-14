@@ -1,7 +1,6 @@
 import React from "react";
-import { Question } from "@prisma/client";
+// import { Question } from "@prisma/client";
 import FormContainer from "../form/FormContainer";
-import { submitAnswerAction } from "@/utils/actions";
 import FormInput from "../form/FormInput";
 import { SubmitButton } from "../form/Buttons";
 import {
@@ -18,10 +17,10 @@ import { UserCard } from "../user/atoms/UserCard";
 import { UserCardMini } from "../user/atoms/UserCardMini";
 import AnswerQuestionModalButton from "../modals/answerQuestionModalButton";
 
-export default async function QuestionCard(question: Question) {
+export default async function QuestionCard(question: any) {
   const user = await prisma.user.findUnique({
     where: {
-      userId: question.askedByUserId,
+      id: question.askedByUserId,
     },
   });
 

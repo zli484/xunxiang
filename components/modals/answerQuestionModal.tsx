@@ -12,16 +12,15 @@ import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
 import FormContainer from "../form/FormContainer";
 import TextAreaInput from "../form/TextAreaInput";
-import { submitQuestionAction } from "@/utils/actions";
-import { Question } from "@prisma/client";
+// import { submitQuestionAction } from "@/utils/actions";
 import FormInput from "../form/FormInput";
 import { SubmitButton } from "../form/Buttons";
-import { submitAnswerAction } from "@/utils/actions";
+// import { submitAnswerAction } from "@/utils/actions";
 
 interface AnswerQuestionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  question: Question;
+  question: any;
 }
 
 const AnswerQuestionModal: React.FC<AnswerQuestionModalProps> = ({
@@ -39,17 +38,15 @@ const AnswerQuestionModal: React.FC<AnswerQuestionModalProps> = ({
           <DialogTitle>{question.questionText}</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          <FormContainer action={submitAnswerAction}>
+          {/* <FormContainer action={submitAnswerAction}>
             <TextAreaInput name="answer" labelText="Answer" />
             <input type="hidden" name="questionId" value={question.id} />
 
             <div className="flex justify-end mt-12">
               <SubmitButton text="Send Answer" />
-              {/* <Button type="submit" onClick={() => onClose}>
-                Send Question
-              </Button> */}
+     
             </div>
-          </FormContainer>
+          </FormContainer> */}
         </DialogDescription>
         <DialogFooter>
           {/* Add any buttons or additional footer content here */}

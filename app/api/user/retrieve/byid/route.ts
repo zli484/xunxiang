@@ -10,15 +10,12 @@ export async function POST(req: Request) {
     const userId = body.userId;
 
     console.log("userId: " + userId);
-    const userIdNumber = Number(userId);
 
     const user = await db.user.findUnique({
       where: {
-        userId: userIdNumber,
+        id: userId,
       },
     });
-
-    console.log("the user found is ", user);
 
     // Check if user exists
     if (!user) {

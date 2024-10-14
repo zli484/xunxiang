@@ -6,8 +6,8 @@ import { toggleFavoriteAction } from "@/utils/actions";
 import { CardSubmitButton } from "../form/Buttons";
 
 type FavoriteToggleFormProps = {
-  saveReceiverUserId: number;
-  userSaveId: number | null;
+  saveReceiverUserId: string;
+  userSaveId: string | null;
 };
 
 function FavoriteToggleForm({

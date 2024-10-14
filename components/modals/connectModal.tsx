@@ -56,7 +56,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          introUserId: user.userId,
+          introUserId: user.id,
         }),
       })
         .then(async (res) => {
@@ -93,7 +93,7 @@ const ConnectModal: React.FC<ConnectModalProps> = ({
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        viewedUserId: user.userId,
+        viewedUserId: user.id,
         message,
       }),
     }).catch((err) => {

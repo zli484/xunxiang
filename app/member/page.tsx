@@ -4,34 +4,44 @@ import { notFound, redirect } from "next/navigation";
 import UserScreen from "@/components/screens/user-screen";
 import prisma from "@/lib/services/prisma";
 import AllUserScreen from "@/components/user/screens/all-users-screen";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function MembersPage() {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  // const cookieStore = cookies();
+  // const supabase = createServerComponentClient({ cookies: () => cookieStore });
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession();
+  // const {
+  //   data: { session },
+  // } = await supabase.auth.getSession();
 
-  console.log("session from user page", session);
+  // console.log("session from user page", session);
 
-  if (!session) {
-    redirect("/login");
+  const user = await currentUser();
+
+  if (!user) {
+    redirect("/sign-up");
   }
 
-  const user = await prisma.user.findUnique({
+  const currUser = await prisma.user.findUnique({
     where: {
-      email: session.user.email,
+      email: user.emailAddresses[0].emailAddress,
     },
   });
 
-  const allUsers = await prisma.user.findMany();
+  const allUsers = await prisma.user.findMany({
+    orderBy: {
+      profilePictureURL: {
+        sort: "asc", // Users with null or empty URL will be at the bottom
+        nulls: "last", // Explicitly place null values last if using PostgreSQL
+      },
+    },
+  });
 
   // Get the userIds of all the users that the currently logged in user has saved
   const userSaves = await prisma.userSave.findMany({
     where: {
       saveInitiatorUser: {
-        userId: user?.userId,
+        id: currUser?.id,
       },
     },
     select: {

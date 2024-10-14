@@ -1,3 +1,9 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -5,35 +11,23 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
-
-model Community {
-  id   Int    @id @default(autoincrement())
-  cuid String @unique @default(cuid())
-
-  name        String
-  description String
-  picture     String?
-  members     User[]
-
-  createdAt                   DateTime                      @default(now())
-  updatedAt                   DateTime                      @updatedAt
-
-  @@map("communities")
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
 }
-
-
 
 model User {
-  userId              Int                    @id @default(autoincrement())
-  cuid          String  @unique @default(cuid())
-  memberId            Int?
+  id                     String                    @id @default(cuid())
+  clerkId                 String?                 @unique 
+  gender              Gender?
   isAdmin             Boolean                @default(false)
   firstName           String?
   lastName            String?
   nameOtherLang       String?
-  gender              String?
   careerGoal          String?
   careerGoalEng       String?
   graduationYear      Int?
@@ -55,219 +49,120 @@ model User {
   bio                 String?
   botSummary          String?                @default("")
   joinedDate          DateTime?
-  bioEmbedding        Unsupported("vector")?
-  interestEmbedding   Unsupported("vector")?
-  careerGoalEmbedding Unsupported("vector")?
   currentCity         String?
   isOnboarded         Boolean                @default(false)
   personalTags        String[]
   professionalTags    String[]
   currentCompany      String?
   currentRole         String?
-  communities         Community[]
-  activities          Activity[]
-  hangouts            Hangout[]
-  chats               Chat[]
-  userDetail          UserDetail?
-  userInfoPoint       UserInfoPoint[]
-  userSummary         UserSummary[]
-  initiatedConnections    Connection[]          @relation("initiator")
-  receivedConnections    Connection[]          @relation("receiver")
-  saveInitiatorUser     UserSave[]             @relation("saves")
-  saveReceiverUser      UserSave[]             @relation("saved by")
+  savedBy             UserSave[]             @relation("saved by")
+  saves               UserSave[]             @relation("saves")
+  createdAt           DateTime                @default(now())
+  updatedAt           DateTime                @updatedAt
+  deletedAt              DateTime?                // Indicates soft-deleted records
 
+  isMentor            Boolean                @default(false)
+  mentorProfile       MentorProfile?
+  menteeProfile       MenteeProfile?
   @@map("users")
 }
 
 
-enum ConnectionStatus {
+model UserSave {
+  id        Int      @id @default(autoincrement())
+  saveInitiatorUserId    String
+  saveReceiverUserId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  saveInitiatorUser      User     @relation("saves", fields: [saveInitiatorUserId], references: [id], onDelete: Cascade)
+  saveReceiverUser User     @relation("saved by", fields: [saveReceiverUserId], references: [id], onDelete: Cascade)
+
+  @@map("user_saves")
+  @@index([saveInitiatorUserId], name: "idx_save_initiator")
+  @@index([saveReceiverUserId], name: "idx_save_receiver")
+
+}
+
+
+model ExpertiseArea {
+  id    Int      @id @default(autoincrement())
+  name  String   @unique // Example: "Data Science", "Marketing", "Leadership"
+  mentors MentorProfile[] @relation("MentorExpertise") // Define opposite side of the relation
+
+  @@map("expertise_areas")
+}
+
+
+model MentorProfile {
+  id                   String      @id @default(cuid())
+  userId               String      @unique // Ensure a mentor has one profile
+  user                 User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Mentor-specific fields
+  bio                  String?     // A bio specifically as a mentor
+  yearsOfExperience    Int?
+  pastExperience       String?     // Description of past experience (free-form text or JSON)
+  
+  
+  // Mentee expectation
+  menteeExpectations   String?     // Free-form text to explain what mentors expect from mentees
+  menteeQualifications String[]    // Specific qualifications or skills mentors want from mentees
+
+    // Mentorship logistics
+  maxMentees           Int?        // Max number of mentees a mentor can have
+  availability         String?     // Mentors can specify available times or schedules
+  
+  expertiseAreas       ExpertiseArea[] @relation("MentorExpertise")
+  applications         Application[]   @relation("applicationsReceivedAsMentor")
+
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  @@map("mentor_profiles")
+}
+
+
+model MenteeProfile {
+  id                  String          @id @default(cuid())
+  userId              String          @unique
+  user                User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bio                 String?
+  careerGoals         String?
+  currentChallenges   String?
+
+  mentorPreferences   String?         // Expectations or preferences for the mentor
+  availability        String?         // Availability of the mentee for meetings
+
+  applications         Application[]   @relation("applicationsSentAsMentee")
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+
+  @@map("mentee_profiles")
+}
+
+
+
+
+model Application {
+  id                   String     @id @default(cuid())
+  menteeId             String
+  mentee               MenteeProfile       @relation("applicationsSentAsMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+  
+  mentorId             String
+  mentor               MentorProfile @relation("applicationsReceivedAsMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  
+  status               ApplicationStatus  // Enum: PENDING, ACCEPTED, REJECTED
+  appliedAt            DateTime           @default(now())
+  responseAt           DateTime?
+  message              String?            // Optional message from mentee
+  
+  @@map("applications")
+}
+
+enum ApplicationStatus {
   PENDING
   ACCEPTED
   REJECTED
-  CANCELLED
-}
-
-model Connection {
-  id        Int      @id @default(autoincrement())
-  initiatorUserId Int
-  receiverUserId  Int
-  initiatorMessage String?
-  status   ConnectionStatus @default(PENDING)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  initiatorUser      User     @relation("initiator", fields: [initiatorUserId], references: [userId], onDelete: Cascade)
-  receiverUser    User     @relation("receiver", fields: [receiverUserId], references: [userId], onDelete: Cascade)
-
-  @@map("connections")
-}
-
-model UserSave {
-  id        Int      @id @default(autoincrement())
-  saveInitiatorUserId    Int
-  saveReceiverUserId Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  saveInitiatorUser      User     @relation("saves", fields: [saveInitiatorUserId], references: [userId], onDelete: Cascade)
-  saveReceiverUser User     @relation("saved by", fields: [saveReceiverUserId], references: [userId], onDelete: Cascade)
-
-  @@map("user_saves")
-
-}
-
-model UserDetail {
-  id                            Int                    @id @default(autoincrement())
-  userId                        Int                    @unique
-  selfDescription               String[]
-  pastExperience                String[]
-  interestsAndPassions          String[]
-  goalsAndDreams                String[]
-  currentStatus                 String[]
-  valueAndBelief                String[]
-  additional                    String[]
-  createdAt                     DateTime               @default(now())
-  selfDescriptionEmbedding      Unsupported("vector")?
-  pastExperienceEmbedding       Unsupported("vector")?
-  interestsAndPassionsEmbedding Unsupported("vector")?
-  goalsAndDreamsEmbedding       Unsupported("vector")?
-  currentStatusEmbedding        Unsupported("vector")?
-  valueAndBeliefEmbedding       Unsupported("vector")?
-  additionalEmbedding           Unsupported("vector")?
-  user                          User                   @relation(fields: [userId], references: [userId], onDelete: Cascade)
-
-  @@map("user_details")
-}
-
-model UserSummary {
-  id        Int      @id @default(autoincrement())
-  cuid      String   @unique @default(cuid())
-  userId    Int
-  summary   String
-  createdAt DateTime @default(now())
-  user      User     @relation(fields: [userId], references: [userId], onDelete: Cascade)
-
-  @@map("user_summaries")
-}
-
-model UserInfoPoint {
-  id             Int                  @id @default(autoincrement())
-  userId         Int
-  question       String
-  answer         String
-  keyWords       String[]
-  createdAt      DateTime             @default(now())
-  updatedAt      DateTime             @updatedAt
-  relevantURL    String?
-  published      Boolean              @default(false)
-  relevantImages UserInfoPointImage[]
-  user           User                 @relation(fields: [userId], references: [userId], onDelete: Cascade)
-
-  @@map("user_info_points")
-}
-
-model Chat {
-  id             Int          @id @default(autoincrement())
-  nanoId         String       @unique
-  userId         Int
-  title          String       @default("New chat")
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  receiverUserId Int?
-  type           ChatType     @default(SELF_AGENT)
-  messages       Message[]
-  chatMemory     ChatMemory[]
-  user           User         @relation(fields: [userId], references: [userId], onDelete: Cascade)
-
-  @@map("chats")
-}
-
-model ChatMemory {
-  id        Int      @id @default(autoincrement())
-  chatId    Int
-  createdAt DateTime @default(now())
-  skip      Int
-  summary   String
-  chat      Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
-
-  @@map("chat_memories")
-}
-
-model Message {
-  id            Int      @id @default(autoincrement())
-  chatId        Int
-  role          String
-  content       String
-  name          String?
-  function_call Json?
-  createdAt     DateTime @default(now())
-  chat          Chat     @relation(fields: [chatId], references: [id], onDelete: Cascade)
-}
-
-model Hangout {
-  id            Int      @id @default(autoincrement())
-  cuid          String   @unique @default(cuid())
-  communityId  Int
-  activityId    Int
-  activity    Activity @relation(fields: [activityId], references: [id])
-  hostId        Int
-  host         User?    @relation(fields: [hostId], references: [userId])
-  messageFromHost String?
-  createdAt     DateTime @default(now())
-}
-
-model Activity {
-  id                Int                    @id @default(autoincrement())
-  cuid              String                 @unique @default(cuid())
-  title             String
-  category          String?
-  description       String?
-  address           String?
-  coverPhoto        String
-  photos            String[]
-  highlights        String[]
-  tags              String[]
-  isTimeSensitive   Boolean                @default(false)
-  createdDate       DateTime               @default(now())
-  lastUpdateDate    DateTime               @updatedAt
-  activityEmbedding Unsupported("vector")?
-  creatorId         Int?
-  startDateTime              DateTime?
-  endDateTime                DateTime?
-  url               String?
-  creator           User?                  @relation(fields: [creatorId], references: [userId])
-  hangouts          Hangout[]
-
-  @@map("activities")
-}
-
-model UserInfoPointImage {
-  id              Int           @id @default(autoincrement())
-  cuid            String        @unique @default(cuid())
-  url             String
-  caption         String?
-  userInfoPointId Int
-  createdAt       DateTime      @default(now())
-  updatedAt       DateTime      @updatedAt
-  userInfoPoints  UserInfoPoint @relation(fields: [userInfoPointId], references: [id])
-
-  @@map("images")
-}
-
-
-
-model Question {
-  id      Int      @id @default(autoincrement())
-  questionText String
-  askedByUserId Int
-  askedToUserId Int
-  createdAt DateTime @default(now())
-  answered Boolean @default(false)
-  answerText String?
-  answeredAt DateTime?
-
-    @@map("questions")
-}
-
-enum ChatType {
-  SELF_AGENT
-  OTHERS_AGENT
 }
