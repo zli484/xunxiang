@@ -18,13 +18,11 @@ export async function POST(req: Request) {
     // Given a list of userIds, find the users
     const users = await db.user.findMany({
       where: {
-        userId: {
+        id: {
           in: userIdNumbers,
         },
       },
     });
-
-    console.log("the users found are ", users);
 
     // Check if user exists
     if (!users) {

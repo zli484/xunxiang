@@ -47,7 +47,7 @@ export function UserCard({
   }
 
   return (
-    <Card key={user.userId} className="overflow-hidden p-3 min-h-96 space-y-3">
+    <Card key={user.id} className="overflow-hidden p-3 min-h-96 space-y-3">
       <div className="relative aspect-square w-32 h-32 mx-auto rounded-full">
         <Image
           src={user.profilePictureURL || ""}

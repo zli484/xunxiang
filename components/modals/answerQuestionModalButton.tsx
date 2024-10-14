@@ -5,12 +5,11 @@ import { Button } from "@/components/ui/button";
 
 import { type User } from "@prisma/client";
 import AnswerQuestionModal from "./answerQuestionModal";
-import { Question } from "@prisma/client";
 
 export default function AnswerQuestionModalButton({
   question,
 }: {
-  question: Question;
+  question: any;
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   return (

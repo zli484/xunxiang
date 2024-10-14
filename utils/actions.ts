@@ -11,7 +11,6 @@ import prisma from "@/lib/services/prisma";
 import { revalidatePath } from "next/cache";
 import { uploadImage } from "./supabaseClient";
 import { createClient } from "./supabase/server";
-import { Question } from "@prisma/client";
 import { getEmbedding } from "@/lib/apiUtils";
 
 export const getAuthUser = async () => {
@@ -228,78 +227,78 @@ export const updateProfileAction = async (
   }
 };
 
-export const submitQuestionAction = async (
-  prevState: any,
-  formData: FormData
-): Promise<{ message: string }> => {
-  const user = await getProfileUser();
+// export const submitQuestionAction = async (
+//   prevState: any,
+//   formData: FormData
+// ): Promise<{ message: string }> => {
+//   const user = await getProfileUser();
 
-  if (!user) {
-    return { message: "Please login to submit a question" };
-  }
+//   if (!user) {
+//     return { message: "Please login to submit a question" };
+//   }
 
-  try {
-    console.log("submit question called");
-    const question = formData.get("question") as string;
-    const askedByUserId = user.userId;
-    const askedToUserId = formData.get("askedToUserId") as string;
-    console.log("question is", question);
-    console.log("asked to user id is", askedToUserId);
+//   try {
+//     console.log("submit question called");
+//     const question = formData.get("question") as string;
+//     const askedByUserId = user.id;
+//     const askedToUserId = formData.get("askedToUserId") as string;
+//     console.log("question is", question);
+//     console.log("asked to user id is", askedToUserId);
 
-    // const validatedFields = validateWithZodSchema(questionSchema, { question });
+//     // const validatedFields = validateWithZodSchema(questionSchema, { question });
 
-    if (!askedByUserId || !askedToUserId) {
-      throw new Error("Invalid user id");
-    }
+//     if (!askedByUserId || !askedToUserId) {
+//       throw new Error("Invalid user id");
+//     }
 
-    await db.question.create({
-      data: {
-        questionText: question,
-        askedByUserId: askedByUserId,
-        askedToUserId: parseInt(askedToUserId),
-      },
-    });
+//     await db.question.create({
+//       data: {
+//         questionText: question,
+//         askedByUserId: askedByUserId,
+//         askedToUserId: parseInt(askedToUserId),
+//       },
+//     });
 
-    revalidatePath("/user");
-    return { message: "Question submitted successfully" };
-  } catch (error) {
-    return renderError(error);
-  }
-};
+//     revalidatePath("/user");
+//     return { message: "Question submitted successfully" };
+//   } catch (error) {
+//     return renderError(error);
+//   }
+// };
 
-export const submitAnswerAction = async (
-  prevState: any,
-  formData: FormData
-): Promise<{ message: string }> => {
-  const user = await getProfileUser();
+// export const submitAnswerAction = async (
+//   prevState: any,
+//   formData: FormData
+// ): Promise<{ message: string }> => {
+//   const user = await getProfileUser();
 
-  if (!user) {
-    return { message: "Please login to submit a question" };
-  }
+//   if (!user) {
+//     return { message: "Please login to submit a question" };
+//   }
 
-  try {
-    console.log("submit question called");
-    const answer = formData.get("answer") as string;
-    const questionId = formData.get("questionId") as string;
+//   try {
+//     console.log("submit question called");
+//     const answer = formData.get("answer") as string;
+//     const questionId = formData.get("questionId") as string;
 
-    // const validatedFields = validateWithZodSchema(questionSchema, { question });
+//     // const validatedFields = validateWithZodSchema(questionSchema, { question });
 
-    await db.question.update({
-      where: {
-        id: parseInt(questionId),
-      },
-      data: {
-        answerText: answer,
-        answeredAt: new Date(),
-      },
-    });
+//     await db.question.update({
+//       where: {
+//         id: parseInt(questionId),
+//       },
+//       data: {
+//         answerText: answer,
+//         answeredAt: new Date(),
+//       },
+//     });
 
-    revalidatePath("/user");
-    return { message: "Answer submitted successfully" };
-  } catch (error) {
-    return renderError(error);
-  }
-};
+//     revalidatePath("/user");
+//     return { message: "Answer submitted successfully" };
+//   } catch (error) {
+//     return renderError(error);
+//   }
+// };
 
 export const updateProfileImageAction = async (
   prevState: any,
@@ -334,7 +333,7 @@ export const updateProfileImageAction = async (
 export const fetchFavoriteId = async ({
   saveReceiverUserId,
 }: {
-  saveReceiverUserId: number;
+  saveReceiverUserId: string;
 }) => {
   const user = await getProfileUser();
 
@@ -345,7 +344,7 @@ export const fetchFavoriteId = async ({
   const favorite = await db.userSave.findFirst({
     where: {
       saveReceiverUserId: saveReceiverUserId,
-      saveInitiatorUserId: user.userId,
+      saveInitiatorUserId: user.id,
     },
     select: {
       id: true,
@@ -355,8 +354,8 @@ export const fetchFavoriteId = async ({
 };
 
 export const toggleFavoriteAction = async (prevState: {
-  saveReceiverUserId: number;
-  userSaveId: number | null;
+  saveReceiverUserId: string;
+  userSaveId: string | null;
   pathname: string;
 }) => {
   const user = await getProfileUser();
@@ -370,14 +369,14 @@ export const toggleFavoriteAction = async (prevState: {
     if (userSaveId) {
       await db.userSave.delete({
         where: {
-          id: userSaveId,
+          id: parseInt(userSaveId),
         },
       });
     } else {
       await db.userSave.create({
         data: {
           saveReceiverUserId: saveReceiverUserId,
-          saveInitiatorUserId: user.userId,
+          saveInitiatorUserId: user.id,
         },
       });
     }

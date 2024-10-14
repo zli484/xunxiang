@@ -24,7 +24,7 @@ export default function AllUserScreen({
 }: {
   totalUserCount: number;
   allUsers: User[];
-  savedUsersIDs: number[];
+  savedUsersIDs: string[];
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   // Render your component with the fetched data

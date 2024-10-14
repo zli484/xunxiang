@@ -42,7 +42,7 @@ export default function UserScreen({
 }: {
   totalUserCount: number;
   newUsers: User[];
-  savedUsersIDs: number[];
+  savedUsersIDs: string[];
 }) {
   const [streamData, setStreamData] = useState("");
   const [users, setUsers] = useState<User[]>([]);

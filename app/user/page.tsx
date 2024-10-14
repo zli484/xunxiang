@@ -30,7 +30,7 @@ export default async function User() {
   const newUsers = await prisma.user.findMany({
     where: {
       NOT: {
-        userId: user?.userId,
+        id: user?.id,
       },
     },
     orderBy: {
@@ -45,7 +45,7 @@ export default async function User() {
   const userSaves = await prisma.userSave.findMany({
     where: {
       saveInitiatorUser: {
-        userId: user?.userId,
+        id: user?.id,
       },
     },
     select: {

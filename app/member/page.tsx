@@ -41,7 +41,7 @@ export default async function MembersPage() {
   const userSaves = await prisma.userSave.findMany({
     where: {
       saveInitiatorUser: {
-        userId: currUser?.userId,
+        id: currUser?.id,
       },
     },
     select: {

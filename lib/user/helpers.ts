@@ -15,12 +15,12 @@ export async function fetchUserByEmailHelper(
 }
 
 export async function fetchUserByIdHelper(
-  userId: number
+  userId: string
 ): Promise<User | null> {
   // retrieve the user from Prisma using the userId
   const user = await prisma.user.findUnique({
     where: {
-      userId: userId,
+      id: userId,
     },
   });
 

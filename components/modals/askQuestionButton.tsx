@@ -16,7 +16,7 @@ export default function AskQuestionButton({ user }: { user: User }) {
         <AskQuestionModal
           isOpen={isOpen}
           onClose={onClose}
-          askedToUserId={user.userId}
+          askedToUserId={user.id}
         />
       </div>
     </div>

@@ -48,7 +48,7 @@ export default function ProfilePictureEditor({ user }: { user: User }) {
 
     formData.append("profilePicture", file);
     formData.append("area", JSON.stringify(areaPixels));
-    formData.append("userId", user.userId.toString());
+    formData.append("userId", user.id);
     formData.append("userFirstName", user.firstName?.toString() || "");
     formData.append("profilePictureURL", user.profilePictureURL || "");
     const response = await fetch("/api/user/update/picture", {

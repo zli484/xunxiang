@@ -32,7 +32,7 @@ export function UserCardMini({ user }: { user: User }) {
           <div
             className="cursor-pointer"
             onClick={() => {
-              router.push(`/user/${user.userId}`);
+              router.push(`/user/${user.id}`);
             }}
           >
             <div className="flex w-full justify-evenly p-3">
