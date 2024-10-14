@@ -5,6 +5,7 @@ import UserScreen from "@/components/screens/user-screen";
 import prisma from "@/lib/services/prisma";
 import AllUserScreen from "@/components/user/screens/all-users-screen";
 import { currentUser } from "@clerk/nextjs/server";
+import { UserWithProfiles } from "@/lib/types";
 
 export default async function MembersPage() {
   // const cookieStore = cookies();
@@ -29,6 +30,10 @@ export default async function MembersPage() {
   });
 
   const allUsers = await prisma.user.findMany({
+    include: {
+      menteeProfile: true,
+      mentorProfile: true,
+    },
     orderBy: {
       profilePictureURL: {
         sort: "asc", // Users with null or empty URL will be at the bottom
@@ -54,7 +59,7 @@ export default async function MembersPage() {
   return (
     <AllUserScreen
       totalUserCount={allUsers.length}
-      allUsers={allUsers}
+      allUsers={allUsers as UserWithProfiles[]}
       savedUsersIDs={savedUserIds}
     />
   );

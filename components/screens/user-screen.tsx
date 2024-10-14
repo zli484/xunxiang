@@ -12,7 +12,7 @@ import { PhoneIcon, AddIcon, WarningIcon, SearchIcon } from "@chakra-ui/icons";
 import LaraChatBubble from "../core-ui/lara-chat-bubble";
 import SearchShotcutCardSection from "../search/sections/search-card-section";
 import { BasicButton } from "../form/Buttons";
-
+import { UserWithProfiles } from "@/lib/types";
 const randomDescriptions = [
   "喜欢美食", // likes gourmet food
   "热爱旅行", // loves traveling
@@ -190,7 +190,10 @@ export default function UserScreen({
 
           {/* <UserSection users={users} /> */}
         </div>
-        <UserSection users={users} savedUsersIDs={savedUsersIDs} />
+        <UserSection
+          users={users as UserWithProfiles[]}
+          savedUsersIDs={savedUsersIDs}
+        />
       </div>
       <div className="flex justify-center">{totalUserCount} Members</div>
     </div>

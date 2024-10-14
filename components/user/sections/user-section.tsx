@@ -1,5 +1,5 @@
 import { UserCard } from "../atoms/UserCard";
-import { User } from "@prisma/client";
+import { UserWithProfiles } from "@/lib/types";
 
 // This section takes a list of users and display them
 
@@ -7,7 +7,7 @@ export default function UserSection({
   users,
   savedUsersIDs = [],
 }: {
-  users: Array<User>;
+  users: Array<UserWithProfiles>;
   savedUsersIDs?: Array<string>;
 }) {
   if (!users) {
