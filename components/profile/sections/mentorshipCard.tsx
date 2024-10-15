@@ -39,6 +39,7 @@ import Image from "next/image";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Skeleton } from "@/components/ui/skeleton";
 import MentorshipRequestModal from "./MentorshipRequestModal";
+import MentorApplications from "./MentorApplications";
 
 export default function MentorProfile({ user }: { user: UserWithProfiles }) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
@@ -125,7 +126,7 @@ export default function MentorProfile({ user }: { user: UserWithProfiles }) {
           </CardContent>
         </Card>
 
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle>Mentorship Details</CardTitle>
           </CardHeader>
@@ -153,7 +154,7 @@ export default function MentorProfile({ user }: { user: UserWithProfiles }) {
               <span>Preferred: Video calls</span>
             </div>
           </CardContent>
-        </Card>
+        </Card> */}
       </div>
 
       <Card>
@@ -186,7 +187,7 @@ export default function MentorProfile({ user }: { user: UserWithProfiles }) {
         </CardContent>
       </Card>
 
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle>Mentorship History</CardTitle>
         </CardHeader>
@@ -229,7 +230,7 @@ export default function MentorProfile({ user }: { user: UserWithProfiles }) {
             </p>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       <div className="flex justify-center">
         <Button size="lg" onClick={() => setIsRequestModalOpen(true)}>

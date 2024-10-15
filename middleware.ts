@@ -1,11 +1,12 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
-
-const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
+import {
+  auth,
+  clerkMiddleware,
+  createRouteMatcher,
+} from "@clerk/nextjs/server";
 
 const isProtectedRoute = createRouteMatcher([
-  "/candidate",
-  "/company",
   "/profile",
+  "/mentorship/applications",
 ]);
 
 export const config = {

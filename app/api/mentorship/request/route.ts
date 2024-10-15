@@ -44,8 +44,8 @@ export async function POST(req: Request) {
 
     const application = await prisma.application.create({
       data: {
-        menteeId: loggedInUser.menteeProfile.id,
-        mentorId: mentorUser.mentorProfile.id,
+        menteeProfileId: loggedInUser.menteeProfile.id,
+        mentorProfileId: mentorUser.mentorProfile.id,
         status: "PENDING",
         message,
       },

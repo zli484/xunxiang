@@ -156,7 +156,7 @@ export default function NavBar() {
                             <button
                               onClick={() => {
                                 supabase.auth.signOut();
-                                router.push("/login");
+                                router.push("/sign-in");
                               }}
                               className={classNames(
                                 active ? "bg-gray-100" : "",

@@ -147,11 +147,11 @@ model MenteeProfile {
 model Mentorship {
   id                   String     @id @default(cuid())
   
-  menteeId             String
-  mentee               MenteeProfile       @relation("mentorshipsAsMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+  menteeProfileId      String
+  menteeProfile        MenteeProfile       @relation("mentorshipsAsMentee", fields: [menteeProfileId], references: [id], onDelete: Cascade)
   
-  mentorId             String
-  mentor               MentorProfile @relation("mentorshipsAsMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentorProfileId      String
+  mentorProfile        MentorProfile @relation("mentorshipsAsMentor", fields: [mentorProfileId], references: [id], onDelete: Cascade)
   
   startDate            DateTime    @default(now())
   endDate              DateTime?   // Could be null if the mentorship is ongoing
@@ -165,11 +165,11 @@ model Mentorship {
 
 model Application {
   id                   String     @id @default(cuid())
-  menteeId             String
-  mentee               MenteeProfile       @relation("applicationsSentAsMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+  menteeProfileId      String
+  menteeProfile        MenteeProfile       @relation("applicationsSentAsMentee", fields: [menteeProfileId], references: [id], onDelete: Cascade)
   
-  mentorId             String
-  mentor               MentorProfile @relation("applicationsReceivedAsMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentorProfileId      String
+  mentorProfile        MentorProfile @relation("applicationsReceivedAsMentor", fields: [mentorProfileId], references: [id], onDelete: Cascade)
   
   status               ApplicationStatus  // Enum: PENDING, ACCEPTED, REJECTED
   appliedAt            DateTime           @default(now())
