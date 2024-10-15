@@ -21,10 +21,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
-
 import { School, GraduationCap, Calendar, Home } from "lucide-react";
-
-import { CardBody, CardContainer, CardItem } from "@/components/ui/ace/3d-card";
 import { UserWithProfiles } from "@/lib/types";
 
 function truncate(str: string, num: number) {
@@ -60,14 +57,6 @@ export function UserCard({
       className="overflow-hidden p-3 min-h-96 space-y-3 cursor-pointer hover:shadow-lg transition-shadow duration-300"
       onClick={handleCardClick}
     >
-      <div>
-        {user.mentorProfile && (
-          <div>
-            <p>Mentor</p>
-            <p>{user.mentorProfile.bio}</p>
-          </div>
-        )}
-      </div>
       <div className="relative aspect-square w-32 h-32 mx-auto rounded-full">
         <Image
           src={user.profilePictureURL || ""}

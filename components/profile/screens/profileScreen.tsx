@@ -44,13 +44,15 @@ export default function ProfileScreen({
                 {/* <QuestionsSection userId={user.id} /> */}
               </div>
             </TabsContent>
-            {user.isMentor && (
-              <TabsContent value="mentorship">
-                <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6">
-                  <MentorshipCard mentorProfile={user.mentorProfile} />
-                </div>
-              </TabsContent>
-            )}
+            <div className="w-full">
+              {user.isMentor && (
+                <TabsContent value="mentorship">
+                  <div className="">
+                    <MentorshipCard user={user} />
+                  </div>
+                </TabsContent>
+              )}
+            </div>
           </div>
         </Tabs>
         {/* <div className="flex flex-col w-full bg-white">
