@@ -244,11 +244,13 @@ export const fetchProfileImage = async () => {
 
   const profilePictureURL = await prisma.user.findUnique({
     where: {
-      email: user.emailAddresses[0].emailAddress,
+      clerkId: user.id,
     },
     select: {
       profilePictureURL: true,
     },
   });
+
+  console.log("profilePictureURL", profilePictureURL);
   return profilePictureURL?.profilePictureURL;
 };
