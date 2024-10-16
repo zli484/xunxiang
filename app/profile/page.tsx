@@ -3,7 +3,7 @@ import { fetchUserByEmailHelper } from "@/lib/user/helpers";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import prisma from "@/lib/services/prisma";
-import ProfileScreenForSelf from "@/components/profile/screens/profileScreenForSelf.tsx";
+import ProfileScreenForSelf from "@/components/profile/screens/profileScreenForSelf";
 import { UserWithProfiles } from "@/lib/types";
 import { currentUser } from "@clerk/nextjs/server";
 export default async function ProfilePage({

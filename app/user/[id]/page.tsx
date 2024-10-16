@@ -2,7 +2,6 @@
 import prisma from "@/lib/services/prisma";
 import { notFound } from "next/navigation";
 import { fetchUserByEmailHelper } from "@/lib/user/helpers";
-import ProfileScreenForSelf from "@/components/profile/screens/profileScreenForSelf.tsx";
 import ProfileScreenForOthers from "@/components/profile/screens/profileScreenForOthers";
 import { currentUser } from "@clerk/nextjs/server";
 import { UserWithProfiles } from "@/lib/types";
