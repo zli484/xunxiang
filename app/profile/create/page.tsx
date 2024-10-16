@@ -3,14 +3,21 @@ import FormContainer from "@/components/form/FormContainer";
 import FormInput from "@/components/form/FormInput";
 import { createProfileAction, updateProfileAction } from "@/utils/actions";
 import { currentUser } from "@clerk/nextjs/server";
-import { User } from "@prisma/client";
 import { redirect } from "next/navigation";
 import TextAreaInput from "@/components/form/TextAreaInput";
-import { Form } from "react-hook-form";
-async function CreateProfilePage({ user }: { user?: User }) {
-  //   const user = await currentUser();
 
-  //   if (user?.privateMetadata?.hasProfile) redirect("/");
+import prisma from "@/lib/services/prisma";
+
+export default async function CreateProfilePage() {
+  const clerkUser = await currentUser();
+  if (clerkUser?.privateMetadata?.hasProfile) redirect("/");
+
+  const user = await prisma.user.findUnique({
+    where: {
+      clerkId: clerkUser?.id,
+    },
+  });
+
   return (
     <section className="h-[calc(100vh-57px)] ">
       <div className="p-8 rounded-md ">
@@ -76,4 +83,3 @@ async function CreateProfilePage({ user }: { user?: User }) {
     </section>
   );
 }
-export default CreateProfilePage;

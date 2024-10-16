@@ -13,8 +13,6 @@ export default async function ProfilePage({
 }) {
   const user = await currentUser();
 
-  console.log("user is ", user);
-
   const clerkId = user?.id;
 
   const userWithProfiles = await prisma.user.findUnique({

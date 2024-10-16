@@ -8,14 +8,11 @@ export async function GET(req: Request) {
   try {
     const clerkUser = await currentUser();
     if (!clerkUser) {
-      console.log("debugging 1 - applications");
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { searchParams } = new URL(req.url);
     const mentorProfileId = searchParams.get("mentorProfileId");
-
-    console.log("Received mentorProfileId:", mentorProfileId);
 
     if (!mentorProfileId) {
       return NextResponse.json(
@@ -37,9 +34,6 @@ export async function GET(req: Request) {
     //   console.log("debugging 2 - applications");
     //   return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     // }
-
-    console.log("debugging 3 - applications");
-    console.log("mentorProfileId:", mentorProfileId);
 
     const applications = await prisma.application.findMany({
       where: { mentorProfileId: mentorProfileId },

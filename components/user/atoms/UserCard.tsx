@@ -45,8 +45,6 @@ export function UserCard({
     return null;
   }
 
-  console.log("Rendering UserCard for:", user.firstName);
-
   const handleCardClick = () => {
     router.push(`/user/${user.id}`);
   };

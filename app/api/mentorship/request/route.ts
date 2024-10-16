@@ -5,7 +5,6 @@ import { currentUser } from "@clerk/nextjs/server";
 const prisma = new PrismaClient();
 
 export async function POST(req: Request) {
-  console.log("Received request to create mentorship application");
   try {
     const clerkUser = await currentUser();
     if (!clerkUser) {
@@ -14,16 +13,12 @@ export async function POST(req: Request) {
 
     const { mentorUserId, message } = await req.json();
 
-    console.log("Received mentorId:", mentorUserId);
-    console.log("Received message:", message);
-
     const loggedInUser = await prisma.user.findUnique({
       where: { clerkId: clerkUser.id },
       include: { menteeProfile: true },
     });
 
     if (!loggedInUser || !loggedInUser.menteeProfile) {
-      console.log("User or mentee profile not found");
       return NextResponse.json(
         { error: "User or mentee profile not found" },
         { status: 404 }
@@ -35,7 +30,6 @@ export async function POST(req: Request) {
     });
 
     if (!mentorUser || !mentorUser.mentorProfile) {
-      console.log("Mentor user or mentor profile not found");
       return NextResponse.json(
         { error: "Mentor user or mentor profile not found" },
         { status: 404 }

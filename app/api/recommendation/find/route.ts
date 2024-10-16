@@ -5,11 +5,9 @@ import { vectorStore } from "@/lib/vector/vectorstore";
 export async function POST(req: Request) {
   const db = new PrismaClient();
   const body = await req.json();
-  console.log("body is", body);
+
   const description = body.description;
   const topK = body.topK;
-
-  console.log("description is", description);
 
   const retriever = vectorStore.asRetriever(topK);
 
