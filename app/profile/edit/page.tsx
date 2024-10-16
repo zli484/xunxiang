@@ -2,15 +2,13 @@ import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { fetchUserByEmailHelper } from "@/lib/user/helpers";
 import EditProfileScreen from "@/components/profile/screens/EditProfileScreen";
+import { currentUser } from "@clerk/nextjs/server";
 
 export default async function EditProfilePage() {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
-
-  const { data: session } = await supabase.auth.getSession();
+  const clerkUser = await currentUser();
 
   const user = await fetchUserByEmailHelper(
-    session.session?.user.email as string
+    clerkUser?.emailAddresses[0].emailAddress as string
   );
 
   if (!user) {
