@@ -10,6 +10,15 @@ import { createClient } from "./supabase/server";
 import { getEmbedding } from "@/lib/apiUtils";
 import { currentUser } from "@clerk/nextjs/server";
 
+const getAuthUser = async () => {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error("You must be logged in to access this route");
+  }
+  if (!user.privateMetadata.hasProfile) redirect("/profile/create");
+  return user;
+};
+
 export const getProfileUser = async () => {
   //   const user = await currentUser();
 
@@ -153,7 +162,7 @@ export const updateProfileImageAction = async (
   prevState: any,
   formData: FormData
 ): Promise<{ message: string }> => {
-  const user = await currentUser();
+  const user = await getAuthUser();
 
   if (!user) {
     return { message: "Please login to update your profile image" };
@@ -162,11 +171,14 @@ export const updateProfileImageAction = async (
   try {
     const image = formData.get("image") as File;
     const validatedFields = validateWithZodSchema(imageSchema, { image });
-    const fullPath = await uploadImage(validatedFields.image);
+    const fullPath = await uploadImage({
+      bucketName: "user-profile-pics",
+      image: validatedFields.image,
+    });
 
     await prisma.user.update({
       where: {
-        email: user.emailAddresses[0].emailAddress,
+        clerkId: user.id,
       },
       data: {
         profilePictureURL: fullPath,

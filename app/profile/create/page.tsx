@@ -9,6 +9,8 @@ import TextAreaInput from "@/components/form/TextAreaInput";
 import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import ImageInputContainer from "@/components/form/ImageInputContainer";
+import { updateProfileImageAction } from "@/utils/actions";
 
 export default function CreateProfilePage() {
   const router = useRouter();
@@ -64,6 +66,14 @@ export default function CreateProfilePage() {
         </p>
 
         <form onSubmit={handleSubmit}>
+          <div className="mb-8 flex justify-center">
+            <ImageInputContainer
+              image={""}
+              name={""}
+              action={updateProfileImageAction}
+              text="Create Profile Image"
+            />
+          </div>
           <div className="grid md:grid-cols-2 gap-6">
             <Input
               type="text"

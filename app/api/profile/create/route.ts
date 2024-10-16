@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
 import prisma from "@/lib/services/prisma";
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 
 export async function POST(req: Request) {
   try {
@@ -34,6 +34,12 @@ export async function POST(req: Request) {
         school: data.school,
         currentRole: data.currentRole,
         currentCompany: data.currentCompany,
+      },
+    });
+
+    await clerkClient.users.updateUserMetadata(clerkUser.id, {
+      privateMetadata: {
+        hasProfile: true,
       },
     });
 

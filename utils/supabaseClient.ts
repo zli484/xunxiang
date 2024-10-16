@@ -9,15 +9,23 @@ export function createClient() {
 
 // import { createClient } from "@supabase/supabase-js";
 
-const bucket = "xunxiang-pics";
 const supabase = createClient();
 
-export const uploadImage = async (image: File) => {
+export const uploadImage = async ({
+  bucketName,
+  image,
+}: {
+  bucketName: string;
+  image: File;
+}) => {
+  console.log("Uploading image to bucket:", bucketName);
+  console.log("Image:", image);
+
   const timestamp = Date.now();
   const newName = `${timestamp}-${image.name}`;
   const { data } = await supabase.storage
-    .from(bucket)
+    .from(bucketName)
     .upload(newName, image, { cacheControl: "3600" });
   if (!data) throw new Error("Image upload failed");
-  return supabase.storage.from(bucket).getPublicUrl(newName).data.publicUrl;
+  return supabase.storage.from(bucketName).getPublicUrl(newName).data.publicUrl;
 };
