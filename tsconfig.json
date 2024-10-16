@@ -26,7 +26,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/sections/navbar.jsx"
+    "components/sections/navbar.jsx",
+    "components/profile/screens/profileScreenForSelf"
   ],
   "exclude": ["node_modules"]
 }

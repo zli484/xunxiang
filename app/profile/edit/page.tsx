@@ -1,7 +1,7 @@
-import EditProfileScreen from "@/components/profile/screens/EditProfileScreen";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { fetchUserByEmailHelper } from "@/lib/user/helpers";
+import EditProfileScreen from "@/components/profile/screens/EditProfileScreen";
 
 export default async function EditProfilePage() {
   const cookieStore = cookies();
