@@ -8,6 +8,7 @@ const nextConfig = {
       "storage.googleapis.com",
       "api.typeform.com",
       "glmmjhfzmzyxpvzgrtzk.supabase.co",
+      "xwjpekxgfpfdexgfukfq.supabase.co",
     ],
   },
 };

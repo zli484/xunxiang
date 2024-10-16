@@ -12,6 +12,8 @@ import FormInput from "@/components/form/FormInput";
 import ImageInputContainer from "@/components/form/ImageInputContainer";
 
 import { updateProfileImageAction } from "@/utils/actions";
+import ImageInputContainerLegacy from "@/components/form/ImageInputContainerLegacy";
+
 const LINKEDIN_URL_PLACEHOLDER = "https://www.linkedin.com/in/your-handle-here";
 const INSTAGRAM_HANDLE_PLACEHOLDER = "your-handle-here";
 
@@ -24,7 +26,7 @@ export default function EditProfileScreen({ user }: { user: User }) {
       <div className="w-1/2 flex flex-col p-32 mx-auto">
         {/* {user && <ProfilePictureEditor user={user} />} */}
 
-        <ImageInputContainer
+        <ImageInputContainerLegacy
           image={user.profilePictureURL ? user.profilePictureURL : ""}
           name={user.firstName ? user.firstName : ""}
           action={updateProfileImageAction}

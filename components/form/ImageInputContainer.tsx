@@ -1,58 +1,78 @@
 "use client";
-import { useState } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
-import { Button } from "../ui/button";
-import FormContainer from "./FormContainer";
-import ImageInput from "./ImageInput";
-import { SubmitButton } from "./Buttons";
-import { type actionFunction } from "@/utils/types";
-import { LuUser2 } from "react-icons/lu";
+import { Button } from "@/components/ui/button";
+import { Camera, X } from "lucide-react";
 
-type ImageInputContainerProps = {
-  image: string;
-  name: string;
-  action: actionFunction;
-  text: string;
-  children?: React.ReactNode;
-};
+interface ImageInputContainerProps {
+  onImageChange: (file: File | null) => void;
+  defaultImageUrl?: string;
+}
 
-function ImageInputContainer(props: ImageInputContainerProps) {
-  const { image, name, action, text } = props;
-  const [isUpdateFormVisible, setUpdateFormVisible] = useState(false);
+const ImageInputContainer: React.FC<ImageInputContainerProps> = ({
+  onImageChange,
+  defaultImageUrl = "/default-avatar.png",
+}) => {
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const userIcon = (
-    <LuUser2 className="w-24 h-24 bg-primary rounded text-white mb-4" />
-  );
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+      onImageChange(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setPreviewUrl(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    onImageChange(null);
+  };
+
   return (
-    <div>
-      {image ? (
+    <div className="flex flex-col items-center">
+      <div className="relative w-32 h-32 mb-4">
         <Image
-          src={image}
-          alt={name}
-          width={100}
-          height={100}
-          className="rounded object-cover mb-4 w-24 h-24"
+          src={previewUrl || defaultImageUrl}
+          alt="Profile picture"
+          layout="fill"
+          objectFit="cover"
+          className="rounded-full"
         />
-      ) : (
-        userIcon
-      )}
+        {previewUrl && (
+          <button
+            onClick={handleRemoveImage}
+            className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+          >
+            <X size={16} />
+          </button>
+        )}
+      </div>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        className="hidden"
+        ref={fileInputRef}
+      />
       <Button
+        type="button"
+        onClick={() => fileInputRef.current?.click()}
         variant="outline"
-        size="sm"
-        onClick={() => setUpdateFormVisible((prev) => !prev)}
+        className="flex items-center"
       >
-        {text}
+        <Camera className="mr-2" size={16} />
+        {previewUrl ? "Change Picture" : "Upload Picture"}
       </Button>
-      {isUpdateFormVisible && (
-        <div className="max-w-lg mt-4">
-          <FormContainer action={action}>
-            {props.children}
-            <ImageInput />
-            <SubmitButton size="sm" />
-          </FormContainer>
-        </div>
-      )}
     </div>
   );
-}
+};
+
 export default ImageInputContainer;
