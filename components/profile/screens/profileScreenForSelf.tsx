@@ -30,7 +30,7 @@ export default function ProfileScreenForSelf({
           <TabsContent value="basicInfo">
             <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6">
               <BasicInfoCard isSelf={true} user={user} />
-              <BioCard isSelf={true} user={user} />
+              <BioCard user={user} />
             </div>
           </TabsContent>
 
