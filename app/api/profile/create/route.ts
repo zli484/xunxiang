@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAuth } from "@clerk/nextjs/server";
 import prisma from "@/lib/services/prisma";
 import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
+import { uploadImage } from "@/utils/supabaseClient";
 
 export async function POST(req: Request) {
   try {
@@ -11,32 +12,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await req.json();
+    const formData = await req.formData();
+    const profileImage = formData.get("profileImage") as File | null;
 
-    console.log("json data received is", data);
-
-    // const user = await prisma.user.findUnique({
-    //   where: { clerkId: clerkUser.id },
-    // });
-
-    // if (!user) {
-    //   return NextResponse.json({ error: "User not found" }, { status: 404 });
-    // }
+    let profilePictureURL = null;
+    if (profileImage) {
+      profilePictureURL = await uploadImage({
+        bucketName: "user-profile-pics",
+        image: profileImage,
+      });
+    }
 
     const updatedUser = await prisma.user.create({
       data: {
         clerkId: clerkUser.id,
-        firstName: data.firstName,
-        lastName: data.lastName,
-        bio: data.bio,
-        linkedInLink: data.linkedInLink,
-        graduationYear: parseInt(data.graduationYear),
-        school: data.school,
-        currentRole: data.currentRole,
-        currentCompany: data.currentCompany,
+        firstName: formData.get("firstName") as string,
+        lastName: formData.get("lastName") as string,
+        bio: formData.get("bio") as string,
+        linkedInLink: formData.get("linkedInLink") as string,
+        graduationYear: parseInt(formData.get("graduationYear") as string),
+        school: formData.get("school") as string,
+        currentRole: formData.get("currentRole") as string,
+        currentCompany: formData.get("currentCompany") as string,
+        profilePictureURL: profilePictureURL || null,
       },
     });
-
     await clerkClient.users.updateUserMetadata(clerkUser.id, {
       privateMetadata: {
         hasProfile: true,
@@ -44,18 +44,6 @@ export async function POST(req: Request) {
     });
 
     // Update Clerk user metadata
-    await fetch(`https://api.clerk.dev/v1/users/${clerkUser.id}/metadata`, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        privateMetadata: {
-          hasProfile: true,
-        },
-      }),
-    });
 
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {

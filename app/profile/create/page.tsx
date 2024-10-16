@@ -3,14 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SubmitButton } from "@/components/form/Buttons";
-import FormContainer from "@/components/form/FormContainer";
-import FormInput from "@/components/form/FormInput";
-import TextAreaInput from "@/components/form/TextAreaInput";
-import toast from "react-hot-toast";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import ImageInputContainer from "@/components/form/ImageInputContainer";
-import { updateProfileImageAction } from "@/utils/actions";
+import toast from "react-hot-toast";
 
 export default function CreateProfilePage() {
   const router = useRouter();
@@ -24,6 +20,7 @@ export default function CreateProfilePage() {
     currentRole: "",
     currentCompany: "",
   });
+  const [profileImage, setProfileImage] = useState<File | null>(null);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -32,13 +29,24 @@ export default function CreateProfilePage() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleImageChange = (file: File | null) => {
+    setProfileImage(file);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      const formDataToSend = new FormData();
+      Object.entries(formData).forEach(([key, value]) => {
+        formDataToSend.append(key, value);
+      });
+      if (profileImage) {
+        formDataToSend.append("profileImage", profileImage);
+      }
+
       const response = await fetch("/api/profile/create", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: formDataToSend,
       });
 
       if (response.ok) {
@@ -58,7 +66,7 @@ export default function CreateProfilePage() {
     <section className="min-h-[calc(100vh-57px)] bg-gray-50 py-12">
       <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
         <h1 className="text-3xl font-bold text-center mb-6 text-primary">
-          Welcome! Let's Create Your Profile
+          Welcome! Let us Create Your Profile
         </h1>
         <p className="text-center text-gray-600 mb-8">
           Fill out the information below to get started. This will help others
@@ -66,12 +74,10 @@ export default function CreateProfilePage() {
         </p>
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-8 flex justify-center">
+          <div className="mb-6">
             <ImageInputContainer
-              image={""}
-              name={""}
-              action={updateProfileImageAction}
-              text="Create Profile Image"
+              onImageChange={handleImageChange}
+              defaultImageUrl="/default-avatar.png"
             />
           </div>
           <div className="grid md:grid-cols-2 gap-6">
@@ -94,6 +100,7 @@ export default function CreateProfilePage() {
               placeholder="Bio"
               value={formData.bio}
               onChange={handleChange}
+              className="md:col-span-2"
             />
             <Input
               type="text"

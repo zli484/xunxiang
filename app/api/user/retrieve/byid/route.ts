@@ -9,8 +9,6 @@ export async function POST(req: Request) {
     const body = await req.json();
     const userId = body.userId;
 
-    console.log("userId: " + userId);
-
     const user = await db.user.findUnique({
       where: {
         id: userId,

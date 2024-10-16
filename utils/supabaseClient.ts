@@ -1,15 +1,9 @@
-import { createBrowserClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 
-export function createClient() {
-  return createBrowserClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
-}
+const url = process.env.NEXT_PUBLIC_SUPABASE_URL as string;
+const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY as string;
 
-// import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient();
+const supabase = createClient(url, key);
 
 export const uploadImage = async ({
   bucketName,
@@ -23,9 +17,9 @@ export const uploadImage = async ({
 
   const timestamp = Date.now();
   const newName = `${timestamp}-${image.name}`;
-  const { data } = await supabase.storage
+  const { data, error } = await supabase.storage
     .from(bucketName)
     .upload(newName, image, { cacheControl: "3600" });
-  if (!data) throw new Error("Image upload failed");
+  if (!data) throw new Error(error.message);
   return supabase.storage.from(bucketName).getPublicUrl(newName).data.publicUrl;
 };
