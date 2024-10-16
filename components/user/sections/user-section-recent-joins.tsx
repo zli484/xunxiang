@@ -1,5 +1,5 @@
 import { UserCard } from "../atoms/UserCard";
-import { User } from "@prisma/client";
+import { UserWithProfiles } from "@/lib/types";
 
 // This section takes a list of users and display them
 
@@ -7,7 +7,7 @@ export default function UserSectionRecentJoins({
   users,
   savedUsersIDs = [],
 }: {
-  users: Array<User>;
+  users: Array<UserWithProfiles>;
   savedUsersIDs?: Array<string>;
 }) {
   if (!users) {
@@ -20,7 +20,7 @@ export default function UserSectionRecentJoins({
         return (
           <UserCard
             key={index}
-            user={user}
+            user={user as UserWithProfiles}
             isSaved={savedUsersIDs.includes(user.id)}
           />
         );

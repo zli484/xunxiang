@@ -28,7 +28,7 @@ export default async function OnboardingPage() {
   //   return notFound();
   // }
 
-  return <CreateProfilePage user={user ? user : undefined} />;
+  return <CreateProfilePage />;
 
   // return <Onboarding user={user} />;
 }

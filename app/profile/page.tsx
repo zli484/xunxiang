@@ -4,26 +4,34 @@ import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import prisma from "@/lib/services/prisma";
 import ProfileScreen from "@/components/profile/screens/profileScreen";
-
+import { UserWithProfiles } from "@/lib/types";
+import { currentUser } from "@clerk/nextjs/server";
 export default async function ProfilePage({
   params,
 }: {
   params: { id: string };
 }) {
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
+  const user = await currentUser();
 
-  const { data: session } = await supabase.auth.getSession();
+  const clerkId = user?.id;
 
-  const user = await fetchUserByEmailHelper(
-    session.session?.user.email as string
-  );
+  const userWithProfiles = await prisma.user.findUnique({
+    where: {
+      clerkId,
+    },
+    include: {
+      mentorProfile: true,
+      menteeProfile: true,
+    },
+  });
 
-  if (!user) {
+  if (!userWithProfiles) {
     throw new Error("User not found");
   }
 
-  return <ProfileScreen isSelf={true} user={user} />;
+  return (
+    <ProfileScreen isSelf={true} user={userWithProfiles as UserWithProfiles} />
+  );
 
   // return <Profile user={user} isProfileOwner={true} />;
 }

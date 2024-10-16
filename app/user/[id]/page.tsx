@@ -1,27 +1,18 @@
 // import { getSession } from "@/lib/supabaseSession";
 import prisma from "@/lib/services/prisma";
 import { notFound } from "next/navigation";
-import { cookies } from "next/headers";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { fetchUserByEmailHelper } from "@/lib/user/helpers";
 import ProfileScreen from "@/components/profile/screens/profileScreen";
-
+import { currentUser } from "@clerk/nextjs/server";
+import { UserWithProfiles } from "@/lib/types";
 export default async function ProfileOtherUsersPage({
   params,
 }: {
   params: { id: string };
 }) {
-  console.log("params is", params);
+  const clerkUser = await currentUser();
 
-  const cookieStore = cookies();
-  const supabase = createServerComponentClient({ cookies: () => cookieStore });
-
-  const { data: session } = await supabase.auth.getSession();
-
-  const loggedInUser = await fetchUserByEmailHelper(
-    session.session?.user.email as string
-  );
-  if (!loggedInUser) {
+  if (!clerkUser) {
     notFound();
   }
 
@@ -32,6 +23,9 @@ export default async function ProfileOtherUsersPage({
     where: {
       id: params.id,
     },
+    include: {
+      mentorProfile: true,
+    },
   });
 
   if (!user) {
@@ -40,5 +34,5 @@ export default async function ProfileOtherUsersPage({
 
   // If there exists a chat between loggedInUser and user, then use that chat
 
-  return <ProfileScreen isSelf={false} user={user} />;
+  return <ProfileScreen isSelf={false} user={user as UserWithProfiles} />;
 }

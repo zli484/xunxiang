@@ -16,14 +16,14 @@ import {
 import MembersFilterModal from "@/components/filters/filtersModal";
 import { useDisclosure } from "@chakra-ui/react";
 import { MdOutlineContactMail } from "react-icons/md";
-
+import { UserWithProfiles } from "@/lib/types";
 export default function AllUserScreen({
   totalUserCount,
   allUsers,
   savedUsersIDs,
 }: {
   totalUserCount: number;
-  allUsers: User[];
+  allUsers: UserWithProfiles[];
   savedUsersIDs: string[];
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();

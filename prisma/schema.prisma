@@ -73,7 +73,7 @@ model UserSave {
   saveInitiatorUserId    String
   saveReceiverUserId String
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @updatedAt @default(now())
   saveInitiatorUser      User     @relation("saves", fields: [saveInitiatorUserId], references: [id], onDelete: Cascade)
   saveReceiverUser User     @relation("saved by", fields: [saveReceiverUserId], references: [id], onDelete: Cascade)
 
@@ -114,6 +114,7 @@ model MentorProfile {
   
   expertiseAreas       ExpertiseArea[] @relation("MentorExpertise")
   applications         Application[]   @relation("applicationsReceivedAsMentor")
+  mentorship           Mentorship[]   @relation("mentorshipsAsMentor")
 
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
@@ -135,7 +136,7 @@ model MenteeProfile {
   availability        String?         // Availability of the mentee for meetings
 
   applications         Application[]   @relation("applicationsSentAsMentee")
-
+  mentorship           Mentorship[]   @relation("mentorshipsAsMentee")
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
 
@@ -143,15 +144,32 @@ model MenteeProfile {
 }
 
 
+model Mentorship {
+  id                   String     @id @default(cuid())
+  
+  menteeProfileId      String
+  menteeProfile        MenteeProfile       @relation("mentorshipsAsMentee", fields: [menteeProfileId], references: [id], onDelete: Cascade)
+  
+  mentorProfileId      String
+  mentorProfile        MentorProfile @relation("mentorshipsAsMentor", fields: [mentorProfileId], references: [id], onDelete: Cascade)
+  
+  startDate            DateTime    @default(now())
+  endDate              DateTime?   // Could be null if the mentorship is ongoing
+  
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  @@map("mentorships")
+}
 
 
 model Application {
   id                   String     @id @default(cuid())
-  menteeId             String
-  mentee               MenteeProfile       @relation("applicationsSentAsMentee", fields: [menteeId], references: [id], onDelete: Cascade)
+  menteeProfileId      String
+  menteeProfile        MenteeProfile       @relation("applicationsSentAsMentee", fields: [menteeProfileId], references: [id], onDelete: Cascade)
   
-  mentorId             String
-  mentor               MentorProfile @relation("applicationsReceivedAsMentor", fields: [mentorId], references: [id], onDelete: Cascade)
+  mentorProfileId      String
+  mentorProfile        MentorProfile @relation("applicationsReceivedAsMentor", fields: [mentorProfileId], references: [id], onDelete: Cascade)
   
   status               ApplicationStatus  // Enum: PENDING, ACCEPTED, REJECTED
   appliedAt            DateTime           @default(now())

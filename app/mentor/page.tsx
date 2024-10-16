@@ -30,6 +30,9 @@ export default async function MembersPage() {
   });
 
   const allUsers = await prisma.user.findMany({
+    where: {
+      isMentor: true,
+    },
     include: {
       menteeProfile: true,
       mentorProfile: true,
