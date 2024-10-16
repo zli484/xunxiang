@@ -41,7 +41,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 import MentorshipRequestModal from "./MentorshipRequestModal";
 import MentorApplications from "./MentorApplications";
 
-export default function MentorProfile({ user }: { user: UserWithProfiles }) {
+export default function MentorProfileSection({
+  user,
+}: {
+  user: UserWithProfiles;
+}) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const testimonials = [
     {
