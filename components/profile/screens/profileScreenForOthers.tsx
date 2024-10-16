@@ -9,7 +9,7 @@ import BioCard from "../atoms/bioCard";
 import EditProfileButton from "../atoms/editProfileButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import MentorshipCard from "../sections/mentorshipCard";
+import MentorProfileSection from "../sections/mentorProfileSection";
 import { UserWithProfiles } from "@/lib/types";
 
 export default function ProfileScreenForOthers({
@@ -46,7 +46,7 @@ export default function ProfileScreenForOthers({
               {user.isMentor && (
                 <TabsContent value="mentorship">
                   <div className="">
-                    <MentorshipCard user={user} />
+                    <MentorProfileSection user={user} />
                   </div>
                 </TabsContent>
               )}

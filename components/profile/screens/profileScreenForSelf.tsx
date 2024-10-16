@@ -1,10 +1,14 @@
+"use client";
+
 import { UserWithProfiles } from "@/lib/types";
 import BasicInfoCard from "../sections/profileInfoDisplay";
 import BioCard from "../atoms/bioCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import MentorshipCard from "../sections/mentorshipCard";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import MentorProfileForm from "../forms/MentorProfileForm";
+import MenteeProfileForm from "../forms/MenteeProfileForm";
+import MenteeProfileSection from "../sections/menteeProfileSection";
+import MentorProfileSection from "../sections/mentorProfileSection";
+import { Toaster } from "react-hot-toast";
 
 export default function ProfileScreenForSelf({
   user,
@@ -13,6 +17,7 @@ export default function ProfileScreenForSelf({
 }) {
   return (
     <div className="h-screen">
+      <Toaster position="top-right" />
       <Tabs defaultValue="basicInfo" className="flex flex-col">
         <div className="flex items-center">
           <TabsList className="m-12">
@@ -32,14 +37,12 @@ export default function ProfileScreenForSelf({
           <TabsContent value="mentorProfile">
             <div className="max-w-4xl mx-auto p-6">
               {user.mentorProfile ? (
-                <MentorshipCard user={user} />
-              ) : (
-                <div className="text-center">
-                  <p className="mb-4">Your mentor profile is not set up yet.</p>
-                  <Link href="/mentor-profile/create" passHref>
-                    <Button>Create Mentor Profile</Button>
-                  </Link>
+                <div>
+                  <h2>Your Mentor Profile</h2>
+                  <MentorProfileSection user={user} />
                 </div>
+              ) : (
+                <MentorProfileForm />
               )}
             </div>
           </TabsContent>
@@ -47,14 +50,12 @@ export default function ProfileScreenForSelf({
           <TabsContent value="menteeProfile">
             <div className="max-w-4xl mx-auto p-6">
               {user.menteeProfile ? (
-                <MentorshipCard user={user} />
-              ) : (
-                <div className="text-center">
-                  <p className="mb-4">Your mentee profile is not set up yet.</p>
-                  <Link href="/mentee-profile/create" passHref>
-                    <Button>Create Mentee Profile</Button>
-                  </Link>
+                <div>
+                  <h2>Your Mentee Profile</h2>
+                  <MenteeProfileSection user={user} />
                 </div>
+              ) : (
+                <MenteeProfileForm />
               )}
             </div>
           </TabsContent>
