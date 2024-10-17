@@ -23,6 +23,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { School, GraduationCap, Calendar, Home } from "lucide-react";
 import { UserWithProfiles } from "@/lib/types";
+import { Briefcase, Building2 } from "lucide-react";
 
 function truncate(str: string, num: number) {
   if (str.length <= num) {
@@ -65,16 +66,16 @@ export function MentorCard({
       </div>
       <CardContent className="p-6 flex flex-col">
         <div className="space-y-2">
-          {user.school && (
+          {user.currentRole && (
             <div className="flex items-center text-sm text-gray-600">
-              <School className="w-4 h-4 mr-2 text-indigo-600" />
-              <span className="truncate">{user.school}</span>
+              <Briefcase className="w-4 h-4 mr-2 text-indigo-600" />
+              <span className="truncate">{user.currentRole}</span>
             </div>
           )}
-          {user.major && (
+          {user.currentCompany && (
             <div className="flex items-center text-sm text-gray-600">
-              <GraduationCap className="w-4 h-4 mr-2 text-indigo-600" />
-              <span className="truncate">{user.major}</span>
+              <Building2 className="w-4 h-4 mr-2 text-indigo-600" />
+              <span className="truncate">{user.currentCompany}</span>
             </div>
           )}
         </div>

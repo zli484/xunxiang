@@ -20,14 +20,12 @@ export default function BioCard({ user }: { user: User }) {
 
   return (
     <div>
-      <div className="flex flex-col aspect-square w-full bg-background shadow-2xl shadow-slate-200 items-center justify-center rounded-2xl">
-        <div>
-          <Card className="h-96 w-96 flex flex-col justify-center p-6">
-            <div className="flex justify-center items-center">
-              <p className="font-outfit text-sm">{user.bio}</p>
-            </div>
-          </Card>
-        </div>
+      <div>
+        <Card className="h-96 w-96 flex flex-col p-6 overflow-y-scroll">
+          <div className="flex justify-center items-center">
+            <p className="font-outfit text-sm">{user.bio}</p>
+          </div>
+        </Card>
       </div>
     </div>
   );
