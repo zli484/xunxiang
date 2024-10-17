@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -21,139 +20,192 @@ import {
   Linkedin,
   Languages,
   Award,
+  Eye,
+  FileText,
 } from "lucide-react";
 import { UserWithProfiles } from "@/lib/types";
-import Image from "next/image";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { ApplicationWithProfiles } from "@/lib/types";
 
 export default function MenteeProfile({ user }: { user: UserWithProfiles }) {
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [applications, setApplications] = useState<ApplicationWithProfiles[]>(
+    []
+  );
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await fetch(
+          "/api/mentorship/applications/get/appliedAsMentee"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setApplications(data);
+        } else {
+          console.error("Failed to fetch applications");
+        }
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      }
+    };
+
+    fetchApplications();
+  }, []);
+
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="w-32 h-32 relative">
-              <Image
-                src={user?.profilePictureURL || "/default-avatar.png"}
-                alt={`${user?.firstName} ${user?.lastName}`}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold">
-                {user?.firstName} {user?.lastName}
-              </h1>
-              <div className="flex items-center text-muted-foreground">
-                <MapPin className="w-4 h-4 mr-2" />
-                <span>{user?.currentCity}</span>
-              </div>
-              {user?.email && (
-                <div className="flex items-center text-muted-foreground">
-                  <Mail className="w-4 h-4 mr-2" />
-                  <span>{user?.email}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Professional Background</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center">
-              <Briefcase className="w-5 h-5 mr-2 text-muted-foreground" />
+      {user?.menteeProfile && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card
+            className="cursor-pointer hover:bg-accent"
+            onClick={() => setIsProfileModalOpen(true)}
+          >
+            <CardContent className="p-6 flex items-center">
+              <Eye className="w-8 h-8 mr-4 text-primary" />
               <div>
-                <div className="font-semibold">{user?.currentRole}</div>
-                <div className="text-sm text-muted-foreground">
-                  {user?.currentCompany}
+                <CardTitle className="text-lg mb-2">
+                  View Mentee Profile
+                </CardTitle>
+                <CardDescription>
+                  Click to see your full mentee profile
+                </CardDescription>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card
+            className="cursor-pointer hover:bg-accent"
+            onClick={() => setIsApplicationModalOpen(true)}
+          >
+            <CardContent className="p-6 flex items-center">
+              <FileText className="w-8 h-8 mr-4 text-primary" />
+              <div>
+                <CardTitle className="text-lg mb-2">
+                  Mentorship Applications
+                </CardTitle>
+                <CardDescription>
+                  Check the status of your submitted applications
+                </CardDescription>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Dialog
+            open={isApplicationModalOpen}
+            onOpenChange={setIsApplicationModalOpen}
+          >
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>Your Mentorship Applications</DialogTitle>
+                <DialogDescription>
+                  Here is an overview of your submitted mentorship applications
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mt-4 space-y-4">
+                {applications.length > 0 ? (
+                  applications.map((app) => (
+                    <Card key={app.id}>
+                      <CardContent className="p-4">
+                        <p>
+                          <strong>Mentor:</strong>{" "}
+                          {app.mentorProfile.user.firstName}{" "}
+                          {app.mentorProfile.user.lastName}
+                        </p>
+                        <p>
+                          <strong>Status:</strong> {app.status}
+                        </p>
+                        <p>
+                          <strong>Applied on:</strong>{" "}
+                          {new Date(app.appliedAt).toLocaleDateString()}
+                        </p>
+                        <p>
+                          <strong>Message:</strong> {app.message}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))
+                ) : (
+                  <p>No applications submitted yet.</p>
+                )}
+              </div>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog
+            open={isProfileModalOpen}
+            onOpenChange={setIsProfileModalOpen}
+          >
+            <DialogContent className="max-w-3xl">
+              <DialogHeader>
+                <DialogTitle>Your Mentee Profile</DialogTitle>
+                <DialogDescription>
+                  Here is an overview of your mentee profile
+                </DialogDescription>
+              </DialogHeader>
+              <div className="mt-4 space-y-6">
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold flex items-center">
+                    <FileText className="w-5 h-5 mr-2 text-muted-foreground" />
+                    About Me
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {user?.menteeProfile?.bio || "Not specified"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold flex items-center">
+                    <Target className="w-5 h-5 mr-2 text-muted-foreground" />
+                    Career Goals
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {user?.menteeProfile?.careerGoals || "Not specified"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold flex items-center">
+                    <Award className="w-5 h-5 mr-2 text-muted-foreground" />
+                    Current Challenges
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {user?.menteeProfile?.currentChallenges || "Not specified"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold flex items-center">
+                    <Clock className="w-5 h-5 mr-2 text-muted-foreground" />
+                    Availability
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {user?.menteeProfile?.availability || "Not specified"}
+                  </p>
+                </div>
+
+                <div className="space-y-2">
+                  <h3 className="text-lg font-semibold flex items-center">
+                    <Briefcase className="w-5 h-5 mr-2 text-muted-foreground" />
+                    Mentor Preferences
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    {user?.menteeProfile?.mentorPreferences || "Not specified"}
+                  </p>
                 </div>
               </div>
-            </div>
-            {user?.school && (
-              <div className="flex items-center">
-                <GraduationCap className="w-5 h-5 mr-2 text-muted-foreground" />
-                <span>{user?.school}</span>
-              </div>
-            )}
-            <Badge>Seeking Mentorship</Badge>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Mentorship Goals</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <div className="font-semibold">Career Goals</div>
-              <p className="text-sm text-muted-foreground">
-                {user?.menteeProfile?.careerGoals || "Not specified"}
-              </p>
-            </div>
-            <div>
-              <div className="font-semibold">Current Challenges</div>
-              <p className="text-sm text-muted-foreground">
-                {user?.menteeProfile?.currentChallenges || "Not specified"}
-              </p>
-            </div>
-            <div className="flex items-center">
-              <Clock className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>
-                Available:{" "}
-                {user?.menteeProfile?.availability || "Not specified"}
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>About Me</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>{user?.menteeProfile?.bio}</p>
-          <div className="mt-4 space-y-2">
-            <div className="flex items-center">
-              <Linkedin className="w-5 h-5 mr-2 text-muted-foreground" />
-              <a
-                href={user?.linkedInLink || "#"}
-                className="text-primary hover:underline"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                LinkedIn Profile
-              </a>
-            </div>
-            <div className="flex items-center">
-              <Languages className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>Placeholder languages</span>
-            </div>
-            <div className="flex items-center">
-              <Award className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>Placeholder awards</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Mentor Preferences</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>{user?.menteeProfile?.mentorPreferences || "Not specified"}</p>
-        </CardContent>
-      </Card>
-
-      <div className="flex justify-center">
-        <Button size="lg">Find a Mentor</Button>
-      </div>
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
     </div>
   );
 }

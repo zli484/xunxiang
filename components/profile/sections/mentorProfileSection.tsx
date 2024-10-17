@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +33,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
+  Users,
 } from "lucide-react";
 import { UserWithProfiles } from "@/lib/types";
 import Image from "next/image";
@@ -40,11 +41,34 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Skeleton } from "@/components/ui/skeleton";
 import MentorshipRequestModal from "./MentorshipRequestModal";
 import MentorApplications from "./MentorApplications";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ApplicationWithProfiles } from "@/lib/types";
 
 export default function MentorProfileSection({
   user,
+  currentUser,
 }: {
   user: UserWithProfiles;
+  currentUser: UserWithProfiles;
 }) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const testimonials = [
@@ -63,41 +87,124 @@ export default function MentorProfileSection({
   ];
 
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [applications, setApplications] = useState<ApplicationWithProfiles[]>(
+    []
+  );
+
+  const router = useRouter();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await fetch(
+          "/api/mentorship/applications/get/receivedAsMentor"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setApplications(data);
+        } else {
+          console.error("Failed to fetch applications");
+        }
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      }
+    };
+
+    if (user.id === currentUser.id) {
+      fetchApplications();
+    }
+  }, [user.id, currentUser.id]);
+
+  const handleMentorshipRequest = () => {
+    if (!currentUser.menteeProfile) {
+      toast({
+        title: "Mentee Profile Required",
+        description:
+          "Please set up your mentee profile before requesting mentorship.",
+        variant: "destructive",
+      });
+      router.push("/profile");
+    } else {
+      setIsRequestModalOpen(true);
+    }
+  };
+
+  const handleApplicationResponse = async (
+    applicationId: string,
+    status: "ACCEPTED" | "REJECTED"
+  ) => {
+    try {
+      const response = await fetch("/api/mentorship/respond", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ applicationId, status }),
+      });
+
+      if (response.ok) {
+        const updatedApplication = await response.json();
+        setApplications((apps) =>
+          apps.map((app) =>
+            app.id === updatedApplication.id
+              ? { ...app, status: updatedApplication.status }
+              : app
+          )
+        );
+        toast({
+          title: "Application Updated",
+          description: `Application ${status} successfully.`,
+          variant: "default",
+        });
+      } else {
+        throw new Error("Failed to update application");
+      }
+    } catch (error) {
+      console.error("Error updating application:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update application. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   return (
     <div className="container mx-auto p-4 space-y-6">
-      <Card>
-        <CardContent className="p-6">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="w-32 h-32 relative">
-              <Image
-                src={user?.profilePictureURL || "/default-avatar.png"}
-                alt={`${user?.firstName} ${user?.lastName}`}
-                layout="fill"
-                objectFit="cover"
-                className="rounded-full"
-              />
-            </div>
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold">
-                {user?.firstName} {user?.lastName}
-              </h1>
-              <div className="flex items-center text-muted-foreground">
-                <MapPin className="w-4 h-4 mr-2" />
-                <span>{user?.currentCity}</span>
-              </div>
-              {user?.email && (
-                <div className="flex items-center text-muted-foreground">
-                  <Mail className="w-4 h-4 mr-2" />
-                  <span>{user?.email}</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card>
+          <CardContent className="p-6">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="w-32 h-32 relative">
+                <Image
+                  src={user?.profilePictureURL || "/default-avatar.png"}
+                  alt={`${user?.firstName} ${user?.lastName}`}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-full"
+                />
+              </div>
+              <div className="space-y-2">
+                <h1 className="text-3xl font-bold">
+                  {user?.firstName} {user?.lastName}
+                </h1>
+                <div className="flex items-center text-muted-foreground">
+                  <MapPin className="w-4 h-4 mr-2" />
+                  <span>{user?.currentCity}</span>
+                </div>
+                {user?.email && (
+                  <div className="flex items-center text-muted-foreground">
+                    <Mail className="w-4 h-4 mr-2" />
+                    <span>{user?.email}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle>Professional Background</CardTitle>
@@ -129,36 +236,6 @@ export default function MentorProfileSection({
             <Badge>Placeholder badge</Badge>
           </CardContent>
         </Card>
-
-        {/* <Card>
-          <CardHeader>
-            <CardTitle>Mentorship Details</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <div className="font-semibold">Areas of Expertise</div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                <Badge variant="secondary">Web Development</Badge>
-                <Badge variant="secondary">Machine Learning</Badge>
-                <Badge variant="secondary">Cloud Architecture</Badge>
-              </div>
-            </div>
-            <div>
-              <div className="font-semibold">Mentorship Style</div>
-              <div className="text-sm text-muted-foreground">
-                Collaborative and goal-oriented
-              </div>
-            </div>
-            <div className="flex items-center">
-              <Clock className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>Available 5 hours/week</span>
-            </div>
-            <div className="flex items-center">
-              <MessageSquare className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>Preferred: Video calls</span>
-            </div>
-          </CardContent>
-        </Card> */}
       </div>
 
       <Card>
@@ -179,68 +256,36 @@ export default function MentorProfileSection({
                 LinkedIn Profile
               </a>
             </div>
-            <div className="flex items-center">
-              <Languages className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>Placeholder languages</span>
-            </div>
-            <div className="flex items-center">
-              <Award className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>Placeholder awards</span>
-            </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* <Card>
-        <CardHeader>
-          <CardTitle>Mentorship History</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <div className="font-semibold mb-2">Mentees</div>
-            <Progress value={75} className="w-full" />
-            <div className="flex justify-between text-sm text-muted-foreground mt-1">
-              <span>0</span>
-              <span>75 mentees</span>
-              <span>100</span>
+      {user.id === currentUser.id && (
+        <Card
+          className="cursor-pointer hover:bg-accent"
+          onClick={() => setIsApplicationModalOpen(true)}
+        >
+          <CardContent className="p-6 flex items-center">
+            <Users className="w-8 h-8 mr-4 text-primary" />
+            <div>
+              <CardTitle className="text-lg mb-2">
+                Mentee Applications
+              </CardTitle>
+              <CardDescription>
+                {applications.length} application(s) received
+              </CardDescription>
             </div>
-          </div>
-          <div>
-            <div className="font-semibold mb-2">Testimonials</div>
-            <Carousel className="w-full max-w-xs mx-auto">
-              <CarouselContent>
-                {testimonials.map((testimonial, index) => (
-                  <CarouselItem key={index}>
-                    <Card>
-                      <CardContent className="p-4">
-                        <p className="text-sm italic">"{testimonial.text}"</p>
-                        <p className="text-sm font-semibold mt-2">
-                          - {testimonial.author}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </CarouselItem>
-                ))}
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </div>
-          <div>
-            <div className="font-semibold mb-2">Success Story</div>
-            <p className="text-sm">
-              Helped a mentee transition from a junior developer role to a
-              senior position at a FAANG company within 18 months.
-            </p>
-          </div>
-        </CardContent>
-      </Card> */}
+          </CardContent>
+        </Card>
+      )}
 
-      <div className="flex justify-center">
-        <Button size="lg" onClick={() => setIsRequestModalOpen(true)}>
-          Request Mentorship
-        </Button>
-      </div>
+      {user.id != currentUser.id && (
+        <div className="flex justify-center">
+          <Button size="lg" onClick={handleMentorshipRequest}>
+            Request Mentorship
+          </Button>
+        </div>
+      )}
 
       {isRequestModalOpen && (
         <MentorshipRequestModal
@@ -248,70 +293,104 @@ export default function MentorProfileSection({
           onClose={() => setIsRequestModalOpen(false)}
         />
       )}
+
+      <Dialog
+        open={isApplicationModalOpen}
+        onOpenChange={setIsApplicationModalOpen}
+      >
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Mentee Applications</DialogTitle>
+            <DialogDescription>
+              Here is an overview of the mentee applications you have received
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            {applications.length > 0 ? (
+              applications.map((app) => (
+                <Card key={app.id}>
+                  <CardContent className="p-4">
+                    <p>
+                      <strong>Mentee:</strong>{" "}
+                      {app.menteeProfile.user.firstName}{" "}
+                      {app.menteeProfile.user.lastName}
+                    </p>
+                    <p>
+                      <strong>Status:</strong> {app.status}
+                    </p>
+                    <p>
+                      <strong>Applied on:</strong>{" "}
+                      {new Date(app.appliedAt).toLocaleDateString()}
+                    </p>
+                    <p>
+                      <strong>Message:</strong> {app.message}
+                    </p>
+                    {app.status === "PENDING" && (
+                      <div className="mt-4 flex space-x-2">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="default">Accept</Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Accept Application
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to accept this mentorship
+                                application?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleApplicationResponse(app.id, "ACCEPTED")
+                                }
+                              >
+                                Accept
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive">Reject</Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Reject Application
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to reject this mentorship
+                                application?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleApplicationResponse(app.id, "REJECTED")
+                                }
+                              >
+                                Reject
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p>No applications received yet.</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
-
-// import { User } from "@prisma/client";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Badge } from "@/components/ui/badge";
-// import { MentorProfile } from "@prisma/client";
-
-// export default function MentorshipCard({
-//   mentorProfile,
-// }: {
-//   mentorProfile: MentorProfile;
-// }) {
-//   // Assuming these properties exist on the User type for mentors
-//   const {
-//     bio,
-//     yearsOfExperience,
-//     pastExperience,
-//     menteeExpectations,
-//     menteeQualifications,
-//     maxMentees,
-//     availability,
-//   } = mentorProfile;
-
-//   return (
-//     <Card className="w-full">
-//       <CardHeader>
-//         <CardTitle>Mentorship Information</CardTitle>
-//       </CardHeader>
-//       <CardContent>
-//         <div className="space-y-4">
-//           <div>
-//             <h3 className="font-semibold mb-2">Areas of Expertise</h3>
-//             <div className="flex flex-wrap gap-2">
-//               {menteeQualifications.map((area, index) => (
-//                 <Badge key={index} variant="secondary">
-//                   {area}
-//                 </Badge>
-//               ))}
-//             </div>
-//           </div>
-
-//           <div>
-//             <h3 className="font-semibold mb-2">Availability</h3>
-//             <p>{availability}</p>
-//           </div>
-
-//           <div>
-//             <h3 className="font-semibold mb-2">Mentorship Experience</h3>
-//             <p>{yearsOfExperience}</p>
-//           </div>
-
-//           <div>
-//             <h3 className="font-semibold mb-2">Mentorship Style</h3>
-//             <p>{bio || "Not specified"}</p>
-//           </div>
-
-//           <div>
-//             <h3 className="font-semibold mb-2">Current Mentees</h3>
-//             <p>{maxMentees || 0} mentees</p>
-//           </div>
-//         </div>
-//       </CardContent>
-//     </Card>
-//   );
-// }

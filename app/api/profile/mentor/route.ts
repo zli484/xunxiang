@@ -10,12 +10,22 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
+  const user = await prisma.user.findUnique({
+    where: {
+      clerkId: clerkUser.id,
+    },
+  });
+
+  if (!user) {
+    return NextResponse.json({ error: "User not found" }, { status: 404 });
+  }
+
   const data = await req.json();
 
   try {
     const mentorProfile = await prisma.mentorProfile.upsert({
       where: {
-        userId: clerkUser.id,
+        userId: user.id,
       },
       update: {
         bio: data.bio,
@@ -29,7 +39,7 @@ export async function POST(req: Request) {
         availability: data.availability,
       },
       create: {
-        userId: clerkUser.id,
+        userId: user.id,
         bio: data.bio,
         yearsOfExperience: parseInt(data.yearsOfExperience),
         pastExperience: data.pastExperience,

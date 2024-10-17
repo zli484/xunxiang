@@ -16,6 +16,16 @@ export default async function ProfileOtherUsersPage({
     notFound();
   }
 
+  const loggedInUser = await prisma.user.findUnique({
+    where: {
+      clerkId: clerkUser.id,
+    },
+    include: {
+      mentorProfile: true,
+      menteeProfile: true,
+    },
+  });
+
   // const user = await fetchUserByIdHelper(Number(params.id));
 
   // Retrieve user and chat
@@ -34,5 +44,10 @@ export default async function ProfileOtherUsersPage({
 
   // If there exists a chat between loggedInUser and user, then use that chat
 
-  return <ProfileScreenForOthers user={user as UserWithProfiles} />;
+  return (
+    <ProfileScreenForOthers
+      user={user as UserWithProfiles}
+      currentUser={loggedInUser as UserWithProfiles}
+    />
+  );
 }
