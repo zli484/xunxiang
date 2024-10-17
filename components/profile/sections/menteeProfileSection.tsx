@@ -32,18 +32,14 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-
-interface MentorshipApplication {
-  id: string;
-  mentorName: string;
-  status: "pending" | "accepted" | "rejected";
-  appliedAt: string;
-}
+import { ApplicationWithProfiles } from "@/lib/types";
 
 export default function MenteeProfile({ user }: { user: UserWithProfiles }) {
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
-  const [applications, setApplications] = useState<MentorshipApplication[]>([]);
+  const [applications, setApplications] = useState<ApplicationWithProfiles[]>(
+    []
+  );
 
   useEffect(() => {
     const fetchApplications = async () => {
@@ -120,7 +116,9 @@ export default function MenteeProfile({ user }: { user: UserWithProfiles }) {
                     <Card key={app.id}>
                       <CardContent className="p-4">
                         <p>
-                          <strong>Mentor:</strong> {app.mentorName}
+                          <strong>Mentor:</strong>{" "}
+                          {app.mentorProfile.user.firstName}{" "}
+                          {app.mentorProfile.user.lastName}
                         </p>
                         <p>
                           <strong>Status:</strong> {app.status}
@@ -128,6 +126,9 @@ export default function MenteeProfile({ user }: { user: UserWithProfiles }) {
                         <p>
                           <strong>Applied on:</strong>{" "}
                           {new Date(app.appliedAt).toLocaleDateString()}
+                        </p>
+                        <p>
+                          <strong>Message:</strong> {app.message}
                         </p>
                       </CardContent>
                     </Card>

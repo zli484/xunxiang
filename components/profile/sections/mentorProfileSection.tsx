@@ -50,14 +50,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-
-interface MenteeApplication {
-  id: string;
-  menteeName: string;
-  message: string;
-  status: "pending" | "accepted" | "rejected";
-  appliedAt: string;
-}
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { ApplicationWithProfiles } from "@/lib/types";
 
 export default function MentorProfileSection({
   user,
@@ -84,7 +88,9 @@ export default function MentorProfileSection({
 
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
-  const [applications, setApplications] = useState<MenteeApplication[]>([]);
+  const [applications, setApplications] = useState<ApplicationWithProfiles[]>(
+    []
+  );
 
   const router = useRouter();
   const { toast } = useToast();
@@ -122,6 +128,46 @@ export default function MentorProfileSection({
       router.push("/profile");
     } else {
       setIsRequestModalOpen(true);
+    }
+  };
+
+  const handleApplicationResponse = async (
+    applicationId: string,
+    status: "ACCEPTED" | "REJECTED"
+  ) => {
+    try {
+      const response = await fetch("/api/mentorship/respond", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ applicationId, status }),
+      });
+
+      if (response.ok) {
+        const updatedApplication = await response.json();
+        setApplications((apps) =>
+          apps.map((app) =>
+            app.id === updatedApplication.id
+              ? { ...app, status: updatedApplication.status }
+              : app
+          )
+        );
+        toast({
+          title: "Application Updated",
+          description: `Application ${status} successfully.`,
+          variant: "default",
+        });
+      } else {
+        throw new Error("Failed to update application");
+      }
+    } catch (error) {
+      console.error("Error updating application:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update application. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -265,7 +311,9 @@ export default function MentorProfileSection({
                 <Card key={app.id}>
                   <CardContent className="p-4">
                     <p>
-                      <strong>Mentee:</strong> {app.menteeName}
+                      <strong>Mentee:</strong>{" "}
+                      {app.menteeProfile.user.firstName}{" "}
+                      {app.menteeProfile.user.lastName}
                     </p>
                     <p>
                       <strong>Status:</strong> {app.status}
@@ -277,6 +325,63 @@ export default function MentorProfileSection({
                     <p>
                       <strong>Message:</strong> {app.message}
                     </p>
+                    {app.status === "PENDING" && (
+                      <div className="mt-4 flex space-x-2">
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="default">Accept</Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Accept Application
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to accept this mentorship
+                                application?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleApplicationResponse(app.id, "ACCEPTED")
+                                }
+                              >
+                                Accept
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive">Reject</Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>
+                                Reject Application
+                              </AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to reject this mentorship
+                                application?
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction
+                                onClick={() =>
+                                  handleApplicationResponse(app.id, "REJECTED")
+                                }
+                              >
+                                Reject
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               ))

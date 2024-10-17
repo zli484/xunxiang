@@ -44,15 +44,7 @@ export async function GET() {
       },
     });
 
-    const formattedApplications = applications.map((app) => ({
-      id: app.id,
-      menteeName: `${app.menteeProfile.user.firstName} ${app.menteeProfile.user.lastName}`,
-      message: app.message,
-      status: app.status,
-      appliedAt: app.appliedAt.toISOString(),
-    }));
-
-    return NextResponse.json(formattedApplications);
+    return NextResponse.json(applications);
   } catch (error) {
     console.error("Error fetching applications:", error);
     return NextResponse.json(

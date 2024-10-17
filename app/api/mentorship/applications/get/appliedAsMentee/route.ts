@@ -33,7 +33,7 @@ export async function GET() {
       },
       include: {
         mentorProfile: {
-          select: {
+          include: {
             user: {
               select: {
                 firstName: true,
@@ -45,14 +45,14 @@ export async function GET() {
       },
     });
 
-    const formattedApplications = applications.map((app) => ({
-      id: app.id,
-      mentorName: `${app.mentorProfile.user.firstName} ${app.mentorProfile.user.lastName}`,
-      status: app.status,
-      appliedAt: app.appliedAt.toISOString(),
-    }));
+    // const formattedApplications = applications.map((app) => ({
+    //   id: app.id,
+    //   mentorName: `${app.mentorProfile.user.firstName} ${app.mentorProfile.user.lastName}`,
+    //   status: app.status,
+    //   appliedAt: app.appliedAt.toISOString(),
+    // }));
 
-    return NextResponse.json(formattedApplications);
+    return NextResponse.json(applications);
   } catch (error) {
     console.error("Error fetching applications:", error);
     return NextResponse.json(
