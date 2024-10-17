@@ -107,7 +107,7 @@ export default function MenteeProfile({ user }: { user: UserWithProfiles }) {
               <DialogHeader>
                 <DialogTitle>Your Mentorship Applications</DialogTitle>
                 <DialogDescription>
-                  Here's an overview of your submitted mentorship applications
+                  Here is an overview of your submitted mentorship applications
                 </DialogDescription>
               </DialogHeader>
               <div className="mt-4 space-y-4">
@@ -148,7 +148,7 @@ export default function MenteeProfile({ user }: { user: UserWithProfiles }) {
               <DialogHeader>
                 <DialogTitle>Your Mentee Profile</DialogTitle>
                 <DialogDescription>
-                  Here's an overview of your mentee profile
+                  Here is an overview of your mentee profile
                 </DialogDescription>
               </DialogHeader>
               <div className="mt-4 space-y-6">

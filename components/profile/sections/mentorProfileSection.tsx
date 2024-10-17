@@ -302,7 +302,7 @@ export default function MentorProfileSection({
           <DialogHeader>
             <DialogTitle>Mentee Applications</DialogTitle>
             <DialogDescription>
-              Here's an overview of the mentee applications you've received
+              Here is an overview of the mentee applications you have received
             </DialogDescription>
           </DialogHeader>
           <div className="mt-4 space-y-4">
