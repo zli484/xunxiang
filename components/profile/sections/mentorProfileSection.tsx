@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +33,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Star,
+  Users,
 } from "lucide-react";
 import { UserWithProfiles } from "@/lib/types";
 import Image from "next/image";
@@ -40,11 +41,30 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Skeleton } from "@/components/ui/skeleton";
 import MentorshipRequestModal from "./MentorshipRequestModal";
 import MentorApplications from "./MentorApplications";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
+interface MenteeApplication {
+  id: string;
+  menteeName: string;
+  message: string;
+  status: "pending" | "accepted" | "rejected";
+  appliedAt: string;
+}
 
 export default function MentorProfileSection({
   user,
+  currentUser,
 }: {
   user: UserWithProfiles;
+  currentUser: UserWithProfiles;
 }) {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const testimonials = [
@@ -63,6 +83,47 @@ export default function MentorProfileSection({
   ];
 
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [applications, setApplications] = useState<MenteeApplication[]>([]);
+
+  const router = useRouter();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    const fetchApplications = async () => {
+      try {
+        const response = await fetch(
+          "/api/mentorship/applications/get/receivedAsMentor"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setApplications(data);
+        } else {
+          console.error("Failed to fetch applications");
+        }
+      } catch (error) {
+        console.error("Error fetching applications:", error);
+      }
+    };
+
+    if (user.id === currentUser.id) {
+      fetchApplications();
+    }
+  }, [user.id, currentUser.id]);
+
+  const handleMentorshipRequest = () => {
+    if (!currentUser.menteeProfile) {
+      toast({
+        title: "Mentee Profile Required",
+        description:
+          "Please set up your mentee profile before requesting mentorship.",
+        variant: "destructive",
+      });
+      router.push("/profile");
+    } else {
+      setIsRequestModalOpen(true);
+    }
+  };
 
   return (
     <div className="container mx-auto p-4 space-y-6">
@@ -149,23 +210,36 @@ export default function MentorProfileSection({
                 LinkedIn Profile
               </a>
             </div>
-            <div className="flex items-center">
-              <Languages className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>Placeholder languages</span>
-            </div>
-            <div className="flex items-center">
-              <Award className="w-5 h-5 mr-2 text-muted-foreground" />
-              <span>Placeholder awards</span>
-            </div>
           </div>
         </CardContent>
       </Card>
 
-      <div className="flex justify-center">
-        <Button size="lg" onClick={() => setIsRequestModalOpen(true)}>
-          Request Mentorship
-        </Button>
-      </div>
+      {user.id === currentUser.id && (
+        <Card
+          className="cursor-pointer hover:bg-accent"
+          onClick={() => setIsApplicationModalOpen(true)}
+        >
+          <CardContent className="p-6 flex items-center">
+            <Users className="w-8 h-8 mr-4 text-primary" />
+            <div>
+              <CardTitle className="text-lg mb-2">
+                Mentee Applications
+              </CardTitle>
+              <CardDescription>
+                {applications.length} application(s) received
+              </CardDescription>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {user.id != currentUser.id && (
+        <div className="flex justify-center">
+          <Button size="lg" onClick={handleMentorshipRequest}>
+            Request Mentorship
+          </Button>
+        </div>
+      )}
 
       {isRequestModalOpen && (
         <MentorshipRequestModal
@@ -173,6 +247,45 @@ export default function MentorProfileSection({
           onClose={() => setIsRequestModalOpen(false)}
         />
       )}
+
+      <Dialog
+        open={isApplicationModalOpen}
+        onOpenChange={setIsApplicationModalOpen}
+      >
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Mentee Applications</DialogTitle>
+            <DialogDescription>
+              Here's an overview of the mentee applications you've received
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mt-4 space-y-4">
+            {applications.length > 0 ? (
+              applications.map((app) => (
+                <Card key={app.id}>
+                  <CardContent className="p-4">
+                    <p>
+                      <strong>Mentee:</strong> {app.menteeName}
+                    </p>
+                    <p>
+                      <strong>Status:</strong> {app.status}
+                    </p>
+                    <p>
+                      <strong>Applied on:</strong>{" "}
+                      {new Date(app.appliedAt).toLocaleDateString()}
+                    </p>
+                    <p>
+                      <strong>Message:</strong> {app.message}
+                    </p>
+                  </CardContent>
+                </Card>
+              ))
+            ) : (
+              <p>No applications received yet.</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

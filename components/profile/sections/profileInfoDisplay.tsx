@@ -67,8 +67,8 @@ export default function BasicInfoCard({
       </div>
       {!isSelf && (
         <div className="flex items-end">
-          <ConnectButton user={user} />
-          <AskQuestionButton user={user} />
+          {/* <ConnectButton user={user} />
+          <AskQuestionButton user={user} /> */}
         </div>
       )}
     </Card>

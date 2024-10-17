@@ -11,9 +11,23 @@ export default async function ProfilePage({
 }: {
   params: { id: string };
 }) {
-  const user = await currentUser();
+  const clerkUser = await currentUser();
 
-  const clerkId = user?.id;
+  const clerkId = clerkUser?.id;
+
+  if (!clerkId) {
+    throw new Error("User not found");
+  }
+
+  const loggedInUser = await prisma.user.findUnique({
+    where: {
+      clerkId,
+    },
+    include: {
+      mentorProfile: true,
+      menteeProfile: true,
+    },
+  });
 
   const userWithProfiles = await prisma.user.findUnique({
     where: {
@@ -29,7 +43,12 @@ export default async function ProfilePage({
     throw new Error("User not found");
   }
 
-  return <ProfileScreenForSelf user={userWithProfiles as UserWithProfiles} />;
+  return (
+    <ProfileScreenForSelf
+      user={userWithProfiles as UserWithProfiles}
+      currentUser={loggedInUser as UserWithProfiles}
+    />
+  );
 
   // return <Profile user={user} isProfileOwner={true} />;
 }

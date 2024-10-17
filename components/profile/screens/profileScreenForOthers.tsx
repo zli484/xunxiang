@@ -14,8 +14,10 @@ import { UserWithProfiles } from "@/lib/types";
 
 export default function ProfileScreenForOthers({
   user,
+  currentUser,
 }: {
   user: UserWithProfiles;
+  currentUser: UserWithProfiles;
 }) {
   return (
     <>
@@ -46,7 +48,10 @@ export default function ProfileScreenForOthers({
               {user.isMentor && (
                 <TabsContent value="mentorship">
                   <div className="">
-                    <MentorProfileSection user={user} />
+                    <MentorProfileSection
+                      user={user}
+                      currentUser={currentUser}
+                    />
                   </div>
                 </TabsContent>
               )}

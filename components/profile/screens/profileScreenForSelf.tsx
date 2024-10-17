@@ -12,8 +12,10 @@ import { Toaster } from "react-hot-toast";
 
 export default function ProfileScreenForSelf({
   user,
+  currentUser,
 }: {
   user: UserWithProfiles;
+  currentUser: UserWithProfiles;
 }) {
   return (
     <div className="h-screen">
@@ -22,8 +24,8 @@ export default function ProfileScreenForSelf({
         <div className="flex items-center">
           <TabsList className="m-12">
             <TabsTrigger value="basicInfo">Basic Info</TabsTrigger>
-            <TabsTrigger value="mentorProfile">Mentor Profile</TabsTrigger>
-            <TabsTrigger value="menteeProfile">Mentee Profile</TabsTrigger>
+            <TabsTrigger value="mentorProfile">As Mentor</TabsTrigger>
+            <TabsTrigger value="menteeProfile">As Mentee</TabsTrigger>
           </TabsList>
         </div>
         <div>
@@ -39,7 +41,7 @@ export default function ProfileScreenForSelf({
               {user.mentorProfile ? (
                 <div>
                   <h2>Your Mentor Profile</h2>
-                  <MentorProfileSection user={user} />
+                  <MentorProfileSection user={user} currentUser={currentUser} />
                 </div>
               ) : (
                 <MentorProfileForm />
