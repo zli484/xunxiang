@@ -46,6 +46,7 @@ export default function ProfileScreenForOthers({
           <div className="flex items-center">
             <TabsList className="">
               <TabsTrigger value="basicInfo">Info</TabsTrigger>
+              <TabsTrigger value="questions">Questions</TabsTrigger>
 
               {user.isMentor && (
                 <TabsTrigger value="mentorship">Mentorship</TabsTrigger>
@@ -56,11 +57,9 @@ export default function ProfileScreenForOthers({
             <TabsContent value="basicInfo">
               <ProfileInfoDisplay isSelf={false} user={user} />
             </TabsContent>
-            {/* <TabsContent value="questions">
-              <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6">
-                <QuestionsSection userId={user.id} />
-              </div>
-            </TabsContent> */}
+            <TabsContent value="questions">
+              <QuestionsSection user={user} />
+            </TabsContent>
             <div className="w-full">
               {user.isMentor && (
                 <TabsContent value="mentorship">
