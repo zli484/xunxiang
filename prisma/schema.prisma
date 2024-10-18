@@ -55,6 +55,7 @@ model User {
   professionalTags    String[]
   currentCompany      String?
   currentRole         String?
+  roleGroup           RoleGroup?
   savedBy             UserSave[]             @relation("saved by")
   saves               UserSave[]             @relation("saves")
   createdAt           DateTime                @default(now())
@@ -143,6 +144,24 @@ model MenteeProfile {
   @@map("mentee_profiles")
 }
 
+enum RoleGroup {
+  DATA_SCIENTIST
+  SOFTWARE_ENGINEER
+  CONSULTANT
+  PRODUCT_MANAGER
+  PROGRAM_MANAGER
+  INVESTMENT_BANKING_ANALYST
+  PRIVATE_EQUITY_ANALYST
+  FOUNDER
+  SOLUTIONS_ENGINEER
+  ACCOUNT_EXECUTIVE
+  ACTUARIAL_ANALYST
+  MARKETING_MANAGER
+  RESEARCH_ANALYST
+  QUANTITATIVE_ANALYST
+  FINANCIAL_ANALYST
+  OTHER
+}
 
 model Mentorship {
   id                   String     @id @default(cuid())

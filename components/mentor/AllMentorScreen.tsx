@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Textarea } from "@chakra-ui/react";
 import { User } from "@prisma/client";
 import UserSection from "@/components/user/sections/user-section";
@@ -18,6 +18,7 @@ import { useDisclosure } from "@chakra-ui/react";
 import { MdOutlineContactMail } from "react-icons/md";
 import { UserWithProfiles } from "@/lib/types";
 import MentorSection from "./MentorSection";
+import RoleCategoryBar from "./RoleCategoryBar";
 
 export default function AllMentorScreen({
   totalUserCount,
@@ -28,10 +29,27 @@ export default function AllMentorScreen({
   allUsers: UserWithProfiles[];
   savedUsersIDs: string[];
 }) {
+  const [filteredUsers, setFilteredUsers] = useState(allUsers);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // Render your component with the fetched data
+
+  const uniqueRoles = useMemo(() => {
+    const roles = new Set(
+      allUsers.map((user) => user.roleGroup).filter(Boolean)
+    );
+    return ["All", ...Array.from(roles)] as string[];
+  }, [allUsers]);
+
+  const handleRoleFilter = (role: string) => {
+    if (role === "All") {
+      setFilteredUsers(allUsers);
+    } else {
+      setFilteredUsers(allUsers.filter((user) => user.roleGroup === role));
+    }
+  };
+
   return (
-    <div className="my-6 mx-12">
+    <div className=" container my-6 mx-12">
+      <RoleCategoryBar onRoleSelect={handleRoleFilter} roles={uniqueRoles} />
       {/* <MdOutlineContactMail
           className="cursor-pointer"
           onClick={(e) => {
@@ -40,9 +58,8 @@ export default function AllMentorScreen({
           }}
         />
         <MembersFilterModal isOpen={isOpen} onClose={onClose} /> */}
-      <MentorSection users={allUsers} savedUsersIDs={savedUsersIDs} />
-
-      <div className="flex justify-center">{totalUserCount} Members</div>
+      <MentorSection users={filteredUsers} savedUsersIDs={savedUsersIDs} />
+      <div className="flex justify-center">{filteredUsers.length} Members</div>
     </div>
   );
 }
