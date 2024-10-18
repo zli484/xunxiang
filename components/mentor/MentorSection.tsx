@@ -1,9 +1,9 @@
-import { MentorCard } from "../user/atoms/mentor-card";
 import { UserWithProfiles } from "@/lib/types";
+import MentorCard from "./mentorCard";
 
 // This section takes a list of users and display them
 
-export default function UserSection({
+export default function MentorSection({
   users,
   savedUsersIDs = [],
 }: {
@@ -16,15 +16,9 @@ export default function UserSection({
 
   return (
     <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-12 px-12">
         {users.map((user, index) => {
-          return (
-            <MentorCard
-              key={index}
-              user={user}
-              isSaved={savedUsersIDs.includes(user.id)}
-            />
-          );
+          return <MentorCard key={index} user={user} />;
         })}
       </div>
     </div>
