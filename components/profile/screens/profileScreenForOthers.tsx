@@ -6,9 +6,6 @@ import AskQuestionButton from "../../modals/askQuestionButton";
 import ConnectButton from "../sections/connectButton";
 import QuestionsSection from "../sections/questionsSection";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import BioCard from "../atoms/bioCard";
-import EditProfileButton from "../atoms/editProfileButton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import MentorProfileSection from "../sections/mentorProfileSection";
@@ -17,7 +14,7 @@ import NameAndSocialsSection from "../sections/nameAndSocialSection";
 import MainPhotoSection from "../sections/mainPhotoSection";
 import { useRef, useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { Divide } from "lucide-react";
+import ProfileInfoDisplay from "../sections/profileInfoDisplay";
 
 export default function ProfileScreenForOthers({
   user,
@@ -57,51 +54,7 @@ export default function ProfileScreenForOthers({
           </div>
           <div>
             <TabsContent value="basicInfo">
-              <div>
-                <NameAndSocialsSection profile={user} />
-
-                <div className="flex justify-between gap-24">
-                  <div ref={photoSectionRef} className="min-h-[200px] w-full ">
-                    <MainPhotoSection
-                      profilePicURL={user.profilePictureURL || ""}
-                    />
-                  </div>
-                  <div
-                    className="min-h-[200px] w-full overflow-y-scroll"
-                    style={{
-                      maxHeight: photoHeight ? `${photoHeight}px` : "auto",
-                    }}
-                  >
-                    <div className="text-md mb-4">
-                      A QUOTE THAT SPEAKS TO YOU:
-                    </div>
-                    <div className=" w-full h-full flex items-center justify-center">
-                      <div className="italic text-lg leading-relaxed font-extrabold">
-                        TO BE ADDED BY THE USER
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <Separator className="my-12" />
-
-                <div className="flex justify-between gap-24">
-                  <div ref={photoSectionRef} className="min-h-[200px] w-full ">
-                    <div className="text-md mb-4">MY STORY:</div>
-                    <div className=" w-full flex items-center justify-center">
-                      <blockquote className="text-md p-4">
-                        {user.bio || ""}
-                      </blockquote>
-                    </div>
-                  </div>
-                  <div
-                    className="min-h-[200px] w-full overflow-y-scroll"
-                    style={{
-                      maxHeight: photoHeight ? `${photoHeight}px` : "auto",
-                    }}
-                  ></div>
-                </div>
-              </div>
+              <ProfileInfoDisplay isSelf={false} user={user} />
             </TabsContent>
             {/* <TabsContent value="questions">
               <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6">
@@ -122,13 +75,6 @@ export default function ProfileScreenForOthers({
             </div>
           </div>
         </Tabs>
-        {/* <div className="flex flex-col w-full bg-white">
-          {isSelf && <EditProfileButton />}
-          <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6">
-            <BasicInfoCard isSelf={isSelf} user={user} />
-            <BioCard user={user} />
-          </div>
-        </div> */}
       </div>
     </>
   );

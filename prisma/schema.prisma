@@ -65,8 +65,27 @@ model User {
   isMentor            Boolean                @default(false)
   mentorProfile       MentorProfile?
   menteeProfile       MenteeProfile?
+  questionsAsked      Question[]             @relation("questionsAsked")
+  questionsReceived   Question[]             @relation("questionsReceived")
+
   @@map("users")
 }
+
+
+model Question {
+  id                   String     @id @default(cuid())
+  question             String
+  answer               String?
+  askedByUserId        String
+  askedByUser          User        @relation("questionsAsked", fields: [askedByUserId],  references: [id], onDelete: Cascade)
+  askedToUserId        String
+  askedToUser          User        @relation("questionsReceived", fields: [askedToUserId], references: [id], onDelete: Cascade)
+  createdAt            DateTime    @default(now())
+  updatedAt            DateTime    @updatedAt
+
+  @@map("questions")
+}
+
 
 
 model UserSave {
@@ -116,12 +135,13 @@ model MentorProfile {
   expertiseAreas       ExpertiseArea[] @relation("MentorExpertise")
   applications         Application[]   @relation("applicationsReceivedAsMentor")
   mentorship           Mentorship[]   @relation("mentorshipsAsMentor")
-
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
 
   @@map("mentor_profiles")
 }
+
+
 
 
 model MenteeProfile {
@@ -180,6 +200,7 @@ model Mentorship {
 
   @@map("mentorships")
 }
+
 
 
 model Application {
