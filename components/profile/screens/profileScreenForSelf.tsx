@@ -1,7 +1,7 @@
 "use client";
 
 import { UserWithProfiles } from "@/lib/types";
-import BasicInfoCard from "../sections/profileInfoDisplay";
+import ProfileInfoDisplay from "../sections/profileInfoDisplay";
 import BioCard from "../atoms/bioCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MentorProfileForm from "../forms/MentorProfileForm";
@@ -9,6 +9,7 @@ import MenteeProfileForm from "../forms/MenteeProfileForm";
 import MenteeProfileSection from "../sections/menteeProfileSection";
 import MentorProfileSection from "../sections/mentorProfileSection";
 import { Toaster } from "react-hot-toast";
+import QuestionsSection from "../sections/questionsSection";
 
 export default function ProfileScreenForSelf({
   user,
@@ -18,7 +19,7 @@ export default function ProfileScreenForSelf({
   currentUser: UserWithProfiles;
 }) {
   return (
-    <div className="h-screen">
+    <div className="container mx-auto p-12">
       <Toaster position="top-right" />
       <Tabs defaultValue="basicInfo" className="flex flex-col">
         <div className="flex items-center">
@@ -26,14 +27,12 @@ export default function ProfileScreenForSelf({
             <TabsTrigger value="basicInfo">Basic Info</TabsTrigger>
             <TabsTrigger value="mentorProfile">As Mentor</TabsTrigger>
             <TabsTrigger value="menteeProfile">As Mentee</TabsTrigger>
+            <TabsTrigger value="questions">Questions</TabsTrigger>
           </TabsList>
         </div>
         <div>
           <TabsContent value="basicInfo">
-            <div className="grid grid-cols-1 md:grid-cols-2 self-center justify-items-center max-w-4xl gap-6 lg:gap-8 lg:mx-20 rounded-xl p-6">
-              <BasicInfoCard isSelf={true} user={user} />
-              <BioCard user={user} />
-            </div>
+            <ProfileInfoDisplay isSelf={true} user={user} />
           </TabsContent>
 
           <TabsContent value="mentorProfile">
@@ -60,6 +59,10 @@ export default function ProfileScreenForSelf({
                 <MenteeProfileForm />
               )}
             </div>
+          </TabsContent>
+
+          <TabsContent value="questions">
+            <QuestionsSection user={user} />
           </TabsContent>
         </div>
       </Tabs>

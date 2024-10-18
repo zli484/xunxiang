@@ -144,7 +144,7 @@ export const updateProfileAction = async (
 
     await prisma.user.update({
       where: {
-        email: user.emailAddresses[0].emailAddress,
+        clerkId: user.id,
       },
       data: {
         ...validatedFields,

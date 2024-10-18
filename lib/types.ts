@@ -4,6 +4,7 @@ import {
   MentorProfile,
   MenteeProfile,
   Application,
+  Question,
 } from "@prisma/client";
 
 export type UserWithProfiles = User & {
@@ -18,4 +19,8 @@ export type ApplicationWithProfiles = Application & {
   mentorProfile: MentorProfile & {
     user: User;
   };
+};
+
+export type QuestionWithUser = Question & {
+  askedByUser: User;
 };
