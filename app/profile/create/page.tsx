@@ -15,6 +15,15 @@ import {
 import ImageInputContainer from "@/components/form/ImageInputContainer";
 import toast from "react-hot-toast";
 import DefaultAvatar from "@/public/default-avatar.jpg";
+import {
+  User,
+  BookOpen,
+  Building2,
+  Briefcase,
+  LinkedinIcon,
+  GraduationCap,
+  ScrollText,
+} from "lucide-react"; // Make sure to install lucide-react if not already installed
 
 export default function CreateProfilePage() {
   const router = useRouter();
@@ -83,8 +92,9 @@ export default function CreateProfilePage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-8">
-              <div className="mb-10 flex justify-center">
+            <form onSubmit={handleSubmit} className="space-y-12">
+              {/* Profile Image */}
+              <div className="flex justify-center">
                 <div className="w-40 h-40">
                   <ImageInputContainer
                     onImageChange={handleImageChange}
@@ -93,36 +103,41 @@ export default function CreateProfilePage() {
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    First Name
-                  </label>
-                  <Input
-                    type="text"
-                    name="firstName"
-                    placeholder="John"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                  />
+              {/* Personal Information */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <User className="w-5 h-5 text-neutral-500" />
+                  <h2 className="text-lg font-semibold">
+                    Personal Information
+                  </h2>
+                </div>
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">First Name</label>
+                    <Input
+                      type="text"
+                      name="firstName"
+                      placeholder="John"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Last Name</label>
+                    <Input
+                      type="text"
+                      name="lastName"
+                      placeholder="Doe"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
                 <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Last Name
-                  </label>
-                  <Input
-                    type="text"
-                    name="lastName"
-                    placeholder="Doe"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Bio
-                  </label>
+                  <div className="flex items-center gap-2">
+                    <ScrollText className="w-4 h-4 text-neutral-500" />
+                    <label className="text-sm font-medium">Bio</label>
+                  </div>
                   <Textarea
                     name="bio"
                     placeholder="Tell us about yourself..."
@@ -131,70 +146,92 @@ export default function CreateProfilePage() {
                     className="min-h-[120px]"
                   />
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    LinkedIn URL
-                  </label>
-                  <Input
-                    type="text"
-                    name="linkedInLink"
-                    placeholder="https://linkedin.com/in/..."
-                    value={formData.linkedInLink}
-                    onChange={handleChange}
-                  />
+              {/* Education */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <BookOpen className="w-5 h-5 text-neutral-500" />
+                  <h2 className="text-lg font-semibold">Education</h2>
                 </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Graduation Year
-                  </label>
-                  <Input
-                    type="number"
-                    name="graduationYear"
-                    placeholder="2024"
-                    value={formData.graduationYear}
-                    onChange={handleChange}
-                  />
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Building2 className="w-4 h-4 text-neutral-500" />
+                      <label className="text-sm font-medium">School</label>
+                    </div>
+                    <Input
+                      type="text"
+                      name="school"
+                      placeholder="University Name"
+                      value={formData.school}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      {/* <GraduatingCap className="w-4 h-4 text-neutral-500" /> */}
+                      <label className="text-sm font-medium">
+                        Graduation Year
+                      </label>
+                    </div>
+                    <Input
+                      type="number"
+                      name="graduationYear"
+                      placeholder="2024"
+                      value={formData.graduationYear}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    School
-                  </label>
-                  <Input
-                    type="text"
-                    name="school"
-                    placeholder="University Name"
-                    value={formData.school}
-                    onChange={handleChange}
-                  />
+              {/* Professional Information */}
+              <div className="space-y-6">
+                <div className="flex items-center gap-2 border-b pb-2">
+                  <Briefcase className="w-5 h-5 text-neutral-500" />
+                  <h2 className="text-lg font-semibold">
+                    Professional Information
+                  </h2>
                 </div>
-
-                <div className="space-y-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Current Role
-                  </label>
-                  <Input
-                    type="text"
-                    name="currentRole"
-                    placeholder="Software Engineer"
-                    value={formData.currentRole}
-                    onChange={handleChange}
-                  />
-                </div>
-
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                    Current Company
-                  </label>
-                  <Input
-                    type="text"
-                    name="currentCompany"
-                    placeholder="Company Name"
-                    value={formData.currentCompany}
-                    onChange={handleChange}
-                  />
+                <div className="grid md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Current Role</label>
+                    <Input
+                      type="text"
+                      name="currentRole"
+                      placeholder="Software Engineer"
+                      value={formData.currentRole}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">
+                      Current Company
+                    </label>
+                    <Input
+                      type="text"
+                      name="currentCompany"
+                      placeholder="Company Name"
+                      value={formData.currentCompany}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <div className="flex items-center gap-2">
+                      <LinkedinIcon className="w-4 h-4 text-neutral-500" />
+                      <label className="text-sm font-medium">
+                        LinkedIn URL
+                      </label>
+                    </div>
+                    <Input
+                      type="text"
+                      name="linkedInLink"
+                      placeholder="https://linkedin.com/in/..."
+                      value={formData.linkedInLink}
+                      onChange={handleChange}
+                    />
+                  </div>
                 </div>
               </div>
 

@@ -52,10 +52,9 @@ export default function ProfileInfoDisplay({
             maxHeight: photoHeight ? `${photoHeight}px` : "auto",
           }}
         >
-          <div className="text-md mb-4">A QUOTE THAT SPEAKS TO YOU:</div>
           <div className=" w-full h-full flex items-center justify-center">
-            <div className="italic text-lg leading-relaxed font-extrabold">
-              TO BE ADDED BY THE USER
+            <div className=" w-full flex items-center justify-center">
+              <blockquote className="text-md p-4">{user.bio || ""}</blockquote>
             </div>
           </div>
         </div>
@@ -64,12 +63,7 @@ export default function ProfileInfoDisplay({
       <Separator className="my-12" />
 
       <div className="flex justify-between gap-24">
-        <div ref={photoSectionRef} className="min-h-[200px] w-full ">
-          <div className="text-md mb-4">MY STORY:</div>
-          <div className=" w-full flex items-center justify-center">
-            <blockquote className="text-md p-4">{user.bio || ""}</blockquote>
-          </div>
-        </div>
+        <div ref={photoSectionRef} className="min-h-[200px] w-full "></div>
         <div
           className="min-h-[200px] w-full overflow-y-scroll"
           style={{
