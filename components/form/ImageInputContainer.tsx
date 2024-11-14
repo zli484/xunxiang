@@ -2,77 +2,64 @@
 import React, { useState, useRef } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Camera, X } from "lucide-react";
 
 interface ImageInputContainerProps {
   onImageChange: (file: File | null) => void;
-  defaultImageUrl?: string;
+  defaultImageUrl: string;
 }
 
-const ImageInputContainer: React.FC<ImageInputContainerProps> = ({
+export default function ImageInputContainer({
   onImageChange,
-  defaultImageUrl = "/default-avatar.png",
-}) => {
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  defaultImageUrl,
+}: ImageInputContainerProps) {
+  const [previewUrl, setPreviewUrl] = useState<string>(defaultImageUrl);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
     if (file) {
+      onImageChange(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result as string);
       };
       reader.readAsDataURL(file);
-      onImageChange(file);
     }
   };
 
-  const handleRemoveImage = () => {
-    setPreviewUrl(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-    onImageChange(null);
+  const handleButtonClick = () => {
+    fileInputRef.current?.click();
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="relative w-32 h-32 mb-4">
+    <div className="relative group w-40 h-40">
+      <div className="relative w-full h-full rounded-full overflow-hidden border-2 border-gray-200">
         <Image
-          src={previewUrl || defaultImageUrl}
-          alt="Profile picture"
-          layout="fill"
-          objectFit="cover"
-          className="rounded-full"
+          src={previewUrl}
+          alt="Profile preview"
+          fill
+          className="object-cover"
+          priority
         />
-        {previewUrl && (
-          <button
-            onClick={handleRemoveImage}
-            className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <Button
+            variant="secondary"
+            size="sm"
+            className="text-white bg-black/50 hover:bg-black/70"
+            type="button"
+            onClick={handleButtonClick}
           >
-            <X size={16} />
-          </button>
-        )}
+            Change Photo
+          </Button>
+        </div>
       </div>
       <input
+        ref={fileInputRef}
         type="file"
         accept="image/*"
         onChange={handleImageChange}
         className="hidden"
-        ref={fileInputRef}
       />
-      <Button
-        type="button"
-        onClick={() => fileInputRef.current?.click()}
-        variant="outline"
-        className="flex items-center"
-      >
-        <Camera className="mr-2" size={16} />
-        {previewUrl ? "Change Picture" : "Upload Picture"}
-      </Button>
     </div>
   );
-};
-
-export default ImageInputContainer;
+}
