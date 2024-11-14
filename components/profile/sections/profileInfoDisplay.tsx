@@ -37,7 +37,6 @@ export default function ProfileInfoDisplay({
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
 
-  console.log("isself", isSelf);
   return (
     <div>
       <div className="flex justify-end">{isSelf && <EditProfileButton />}</div>

@@ -2,11 +2,19 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SubmitButton } from "@/components/form/Buttons";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import ImageInputContainer from "@/components/form/ImageInputContainer";
 import toast from "react-hot-toast";
+import DefaultAvatar from "@/public/default-avatar.jpg";
 
 export default function CreateProfilePage() {
   const router = useRouter();
@@ -63,83 +71,144 @@ export default function CreateProfilePage() {
   };
 
   return (
-    <section className="min-h-[calc(100vh-57px)] bg-gray-50 py-12">
-      <div className="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-md">
-        <h1 className="text-3xl font-bold text-center mb-6 text-primary">
-          Welcome! Let us Create Your Profile
-        </h1>
-        <p className="text-center text-gray-600 mb-8">
-          Fill out the information below to get started. This will help others
-          get to know you better.
-        </p>
+    <section className="min-h-[calc(100vh-57px)] bg-background/50 py-16">
+      <div className="container max-w-4xl mx-auto px-4">
+        <Card className="border-none shadow-lg">
+          <CardHeader className="text-center space-y-2">
+            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-neutral-950 to-neutral-700 bg-clip-text text-transparent">
+              Create Your Profile
+            </CardTitle>
+            <CardDescription className="text-lg">
+              Share your journey and expertise with the community
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="mb-10 flex justify-center">
+                <div className="w-40 h-40">
+                  <ImageInputContainer
+                    onImageChange={handleImageChange}
+                    defaultImageUrl={DefaultAvatar.src}
+                  />
+                </div>
+              </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-6">
-            <ImageInputContainer
-              onImageChange={handleImageChange}
-              defaultImageUrl="/default-avatar.png"
-            />
-          </div>
-          <div className="grid md:grid-cols-2 gap-6">
-            <Input
-              type="text"
-              name="firstName"
-              placeholder="First Name"
-              value={formData.firstName}
-              onChange={handleChange}
-            />
-            <Input
-              type="text"
-              name="lastName"
-              placeholder="Last Name"
-              value={formData.lastName}
-              onChange={handleChange}
-            />
-            <Textarea
-              name="bio"
-              placeholder="Bio"
-              value={formData.bio}
-              onChange={handleChange}
-              className="md:col-span-2"
-            />
-            <Input
-              type="text"
-              name="linkedInLink"
-              placeholder="LinkedIn URL"
-              value={formData.linkedInLink}
-              onChange={handleChange}
-            />
-            <Input
-              type="number"
-              name="graduationYear"
-              placeholder="Graduation Year"
-              value={formData.graduationYear}
-              onChange={handleChange}
-            />
-            <Input
-              type="text"
-              name="school"
-              placeholder="School"
-              value={formData.school}
-              onChange={handleChange}
-            />
-            <Input
-              type="text"
-              name="currentRole"
-              placeholder="Current Role"
-              value={formData.currentRole}
-              onChange={handleChange}
-            />
-            <Input
-              type="text"
-              name="currentCompany"
-              placeholder="Current Company"
-              value={formData.currentCompany}
-              onChange={handleChange}
-            />
-          </div>
-          <SubmitButton text="Create Profile" className="mt-8 w-full" />
-        </form>
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    First Name
+                  </label>
+                  <Input
+                    type="text"
+                    name="firstName"
+                    placeholder="John"
+                    value={formData.firstName}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Last Name
+                  </label>
+                  <Input
+                    type="text"
+                    name="lastName"
+                    placeholder="Doe"
+                    value={formData.lastName}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Bio
+                  </label>
+                  <Textarea
+                    name="bio"
+                    placeholder="Tell us about yourself..."
+                    value={formData.bio}
+                    onChange={handleChange}
+                    className="min-h-[120px]"
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    LinkedIn URL
+                  </label>
+                  <Input
+                    type="text"
+                    name="linkedInLink"
+                    placeholder="https://linkedin.com/in/..."
+                    value={formData.linkedInLink}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Graduation Year
+                  </label>
+                  <Input
+                    type="number"
+                    name="graduationYear"
+                    placeholder="2024"
+                    value={formData.graduationYear}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    School
+                  </label>
+                  <Input
+                    type="text"
+                    name="school"
+                    placeholder="University Name"
+                    value={formData.school}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Current Role
+                  </label>
+                  <Input
+                    type="text"
+                    name="currentRole"
+                    placeholder="Software Engineer"
+                    value={formData.currentRole}
+                    onChange={handleChange}
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    Current Company
+                  </label>
+                  <Input
+                    type="text"
+                    name="currentCompany"
+                    placeholder="Company Name"
+                    value={formData.currentCompany}
+                    onChange={handleChange}
+                  />
+                </div>
+              </div>
+
+              <Button
+                type="submit"
+                className="w-full max-w-md mx-auto block text-lg font-medium 
+                         bg-gradient-to-r from-neutral-950 to-neutral-800 hover:from-neutral-900 hover:to-neutral-700
+                         transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Create Profile
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
       </div>
     </section>
   );
