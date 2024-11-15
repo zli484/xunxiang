@@ -43,26 +43,27 @@ export default function ProfileInfoDisplay({
       <NameAndSocialsSection profile={user} />
 
       <div className="flex justify-between gap-24">
-        <div ref={photoSectionRef} className="min-h-[200px] w-full ">
+        <div ref={photoSectionRef} className="min-h-[200px] w-full">
           <MainPhotoSection profilePicURL={user.profilePictureURL || ""} />
         </div>
         <div
-          className="min-h-[200px] w-full overflow-y-scroll"
-          style={{
-            maxHeight: photoHeight ? `${photoHeight}px` : "auto",
-          }}
+          className="min-h-[200px] w-full"
+          // style={{
+          //   height: photoHeight ? `${photoHeight}px` : "auto",
+          //   overflowY: "auto",
+          // }}
         >
-          <div className=" w-full h-full flex items-center justify-center">
-            <div className=" w-full flex items-center justify-center">
-              <blockquote className="text-md p-4">{user.bio || ""}</blockquote>
-            </div>
+          <div className="w-full h-full">
+            <blockquote className="text-md p-4  break-words z-50">
+              {user.bio || ""}
+            </blockquote>
           </div>
         </div>
       </div>
 
       <Separator className="my-12" />
 
-      <div className="flex justify-between gap-24">
+      {/* <div className="flex justify-between gap-24">
         <div ref={photoSectionRef} className="min-h-[200px] w-full "></div>
         <div
           className="min-h-[200px] w-full overflow-y-scroll"
@@ -70,7 +71,7 @@ export default function ProfileInfoDisplay({
             maxHeight: photoHeight ? `${photoHeight}px` : "auto",
           }}
         ></div>
-      </div>
+      </div> */}
     </div>
   );
 }

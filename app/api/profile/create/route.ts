@@ -23,27 +23,49 @@ export async function POST(req: Request) {
       });
     }
 
-    const updatedUser = await prisma.user.create({
-      data: {
+    const userData = {
+      firstName: formData.get("firstName") as string,
+      lastName: formData.get("lastName") as string,
+      bio: formData.get("bio") as string,
+      linkedInLink: formData.get("linkedInLink") as string,
+      graduationYear: parseInt(formData.get("graduationYear") as string),
+      school: formData.get("school") as string,
+      currentRole: formData.get("currentRole") as string,
+      currentCompany: formData.get("currentCompany") as string,
+      profilePictureURL: profilePictureURL || null,
+    };
+
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: {
         clerkId: clerkUser.id,
-        firstName: formData.get("firstName") as string,
-        lastName: formData.get("lastName") as string,
-        bio: formData.get("bio") as string,
-        linkedInLink: formData.get("linkedInLink") as string,
-        graduationYear: parseInt(formData.get("graduationYear") as string),
-        school: formData.get("school") as string,
-        currentRole: formData.get("currentRole") as string,
-        currentCompany: formData.get("currentCompany") as string,
-        profilePictureURL: profilePictureURL || null,
       },
     });
+
+    let updatedUser;
+    if (existingUser) {
+      // Update existing user
+      updatedUser = await prisma.user.update({
+        where: {
+          clerkId: clerkUser.id,
+        },
+        data: userData,
+      });
+    } else {
+      // Create new user
+      updatedUser = await prisma.user.create({
+        data: {
+          ...userData,
+          clerkId: clerkUser.id,
+        },
+      });
+    }
+
     await clerkClient.users.updateUserMetadata(clerkUser.id, {
       privateMetadata: {
         hasProfile: true,
       },
     });
-
-    // Update Clerk user metadata
 
     return NextResponse.json({ success: true, user: updatedUser });
   } catch (error) {
