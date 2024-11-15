@@ -20,8 +20,8 @@ export const UserSchema = z.object({
       message: "Last name must be at most 20 characters long",
     }),
 
-  bio: z.string().max(200, {
-    message: "Bio must be at most 200 characters long",
+  bio: z.string().max(5000, {
+    message: "Bio must be at most 5000 characters long",
   }),
   linkedInLink: z.string().max(200, {
     message: "LinkedIn URL must be at most 200 characters long",

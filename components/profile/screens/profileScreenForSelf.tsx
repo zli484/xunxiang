@@ -24,10 +24,10 @@ export default function ProfileScreenForSelf({
       <Tabs defaultValue="basicInfo" className="flex flex-col">
         <div className="flex items-center">
           <TabsList className="m-12">
-            <TabsTrigger value="basicInfo">Basic Info</TabsTrigger>
-            <TabsTrigger value="mentorProfile">As Mentor</TabsTrigger>
+            {/* <TabsTrigger value="basicInfo">Basic Info</TabsTrigger> */}
+            {/* <TabsTrigger value="mentorProfile">As Mentor</TabsTrigger>
             <TabsTrigger value="menteeProfile">As Mentee</TabsTrigger>
-            <TabsTrigger value="questions">Questions</TabsTrigger>
+            <TabsTrigger value="questions">Questions</TabsTrigger> */}
           </TabsList>
         </div>
         <div>

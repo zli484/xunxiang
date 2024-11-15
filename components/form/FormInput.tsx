@@ -9,6 +9,7 @@ type FormInputProps = {
   defaultValue?: string | number;
   placeholder?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
 };
 
 function FormInput({
@@ -19,6 +20,7 @@ function FormInput({
   placeholder,
   onChange,
   visible = true, // Set the default value of visible here
+  required = false,
 }: FormInputProps) {
   return (
     <div className="mb-2" style={{ display: visible ? "block" : "none" }}>
@@ -32,7 +34,7 @@ function FormInput({
         defaultValue={defaultValue}
         placeholder={placeholder}
         onChange={onChange}
-        required
+        required={required}
       />
     </div>
   );

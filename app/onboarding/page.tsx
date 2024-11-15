@@ -24,6 +24,7 @@ export default async function OnboardingPage() {
   // }
 
   const user = await getProfileUser();
+
   // if (!user) {
   //   return notFound();
   // }
