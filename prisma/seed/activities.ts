@@ -1,6 +1,4 @@
-const { PrismaClient } = require("@prisma/client");
-// @ts-ignore
-const prisma = new PrismaClient();
+import prisma from "@/lib/services/prisma";
 
 async function main() {
   // First, create some activity categories

@@ -130,6 +130,72 @@ export default function ActivityDetailModal({
             )}
           </div>
 
+          {/* Host Section - New Addition */}
+          <div className="border rounded-xl p-6 bg-[#F8F8F8]">
+            <div className="flex items-start gap-6">
+              <div className="flex-shrink-0">
+                {activity.createdByUser.profilePictureURL ? (
+                  <img
+                    src={activity.createdByUser.profilePictureURL}
+                    alt={`${activity.createdByUser.firstName} ${activity.createdByUser.lastName}`}
+                    className="w-16 h-16 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full bg-[#E8E8E8] flex items-center justify-center">
+                    <User className="h-8 w-8 text-[#767676]" />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-grow">
+                <div className="flex justify-between items-start">
+                  <div>
+                    <h3 className="text-[18px] font-semibold text-[#484848]">
+                      Hosted by {activity.createdByUser.firstName}{" "}
+                      {activity.createdByUser.lastName}
+                    </h3>
+                    {activity.createdByUser.currentRole && (
+                      <p className="text-[#767676] text-sm">
+                        {activity.createdByUser.currentRole}
+                        {activity.createdByUser.currentCompany &&
+                          ` at ${activity.createdByUser.currentCompany}`}
+                      </p>
+                    )}
+                  </div>
+                  {!isOwner && (
+                    <Button
+                      variant="outline"
+                      className="text-[#484848] border-[#767676]"
+                      size="sm"
+                    >
+                      View Profile
+                    </Button>
+                  )}
+                </div>
+
+                {activity.createdByUser.bio && (
+                  <p className="mt-3 text-[#484848] text-sm line-clamp-3">
+                    {activity.createdByUser.bio}
+                  </p>
+                )}
+
+                <div className="mt-4 flex flex-wrap gap-2">
+                  {activity.createdByUser.professionalTags?.map(
+                    (tag, index) => (
+                      <Badge
+                        key={index}
+                        variant="secondary"
+                        className="bg-[#F2F2F2] text-[#484848]"
+                      >
+                        {tag}
+                      </Badge>
+                    )
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Key Details */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-4">

@@ -75,12 +75,15 @@ export default function ActivityMatchingScreen({
           Filters
         </Button>
       </div>
-
       {/* Quick Filters */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
         <Button
           variant={selectedCategory === null ? "default" : "outline"}
-          className="px-4 py-1 h-8 whitespace-nowrap"
+          className={`px-4 py-1 h-8 whitespace-nowrap ${
+            selectedCategory === null
+              ? "bg-[#FF5A5F] hover:bg-[#FF5A5F]/90"
+              : ""
+          }`}
           onClick={() => setSelectedCategory(null)}
         >
           All
@@ -89,7 +92,11 @@ export default function ActivityMatchingScreen({
           <Button
             key={category.id}
             variant={selectedCategory === category.id ? "default" : "outline"}
-            className="px-4 py-1 h-8 whitespace-nowrap"
+            className={`px-4 py-1 h-8 whitespace-nowrap ${
+              selectedCategory === category.id
+                ? "bg-[#FF5A5F] hover:bg-[#FF5A5F]/90"
+                : ""
+            }`}
             onClick={() => setSelectedCategory(category.id)}
           >
             {category.name}
@@ -115,11 +122,6 @@ export default function ActivityMatchingScreen({
                   alt={activity.title}
                   className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
                 />
-                <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-xs font-medium">
-                  {activity.cost
-                    ? `${activity.currency} ${activity.cost}`
-                    : "Free"}
-                </div>
               </div>
               <div className="p-3">
                 <h3 className="text-[16px] font-semibold text-[#484848] truncate">
@@ -194,27 +196,6 @@ export default function ActivityMatchingScreen({
         onClose={() => setShowCreateModal(false)}
         categories={categories}
       />
-
-      {/* Pagination */}
-      {filteredActivities.length > 0 && (
-        <div className="mt-8 flex justify-center items-center gap-2">
-          <Button variant="outline" className="h-8 px-4">
-            Previous
-          </Button>
-          {[1, 2, 3, 4, 5].map((page) => (
-            <Button
-              key={page}
-              variant={page === 1 ? "default" : "outline"}
-              className="h-8 w-8"
-            >
-              {page}
-            </Button>
-          ))}
-          <Button variant="outline" className="h-8 px-4">
-            Next
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
