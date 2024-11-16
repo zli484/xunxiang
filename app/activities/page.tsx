@@ -45,9 +45,10 @@ export default async function ActivitiesPage() {
     },
   });
 
-  // Fetch unique categories for filters
+  // Fetch categories with IDs
   const categories = await prisma.activityCategory.findMany({
     select: {
+      id: true,
       name: true,
     },
   });
@@ -55,7 +56,7 @@ export default async function ActivitiesPage() {
   return (
     <ActivityMatchingScreen
       activities={activities}
-      categories={categories.map((c: ActivityCategory) => c.name)}
+      categories={categories}
       currentUserId={currUser.id}
     />
   );

@@ -1,17 +1,21 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ActivityExtended } from "@/lib/types";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { User } from "lucide-react";
+import {
+  User,
+  MapPin,
+  Calendar,
+  Users,
+  Clock,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface ActivityDetailModalProps {
   activity: ActivityExtended;
@@ -26,28 +30,97 @@ export default function ActivityDetailModal({
   onClose,
   isOwner,
 }: ActivityDetailModalProps) {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const allImages = activity.photos;
+
   const formatDateTime = (date: Date | null) => {
     if (!date) return "Flexible";
     return format(date, "PPP 'at' p");
   };
 
+  const nextImage = () => {
+    setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
+  };
+
+  const previousImage = () => {
+    setCurrentImageIndex(
+      (prev) => (prev - 1 + allImages.length) % allImages.length
+    );
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+        {/* Image Gallery */}
+        <div className="relative aspect-[16/9] w-full bg-black">
+          <img
+            src={
+              allImages[currentImageIndex]?.url || "/placeholder-activity.jpg"
+            }
+            alt={activity.title}
+            className="w-full h-full object-contain"
+          />
+          {allImages.length > 1 && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full h-8 w-8"
+                onClick={previousImage}
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white rounded-full h-8 w-8"
+                onClick={nextImage}
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1">
+                {allImages.map((_, index) => (
+                  <div
+                    key={index}
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full",
+                      index === currentImageIndex ? "bg-white" : "bg-white/50"
+                    )}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="p-6 space-y-8">
+          {/* Header Section */}
           <div className="flex justify-between items-start">
             <div>
-              <DialogTitle className="text-2xl font-bold">
+              <h1 className="text-[32px] font-bold text-[#484848] mb-2">
                 {activity.title}
-              </DialogTitle>
-              <DialogDescription className="text-sm text-muted-foreground">
-                Posted by {activity.createdByUser.firstName}{" "}
-                {activity.createdByUser.lastName}
-              </DialogDescription>
+              </h1>
+              <div className="flex items-center gap-2 text-[#767676]">
+                <span className="text-[16px]">
+                  Hosted by {activity.createdByUser.firstName}{" "}
+                  {activity.createdByUser.lastName}
+                </span>
+                <span>•</span>
+                <Badge
+                  variant="outline"
+                  className="text-[#FF5A5F] border-[#FF5A5F]"
+                >
+                  {activity.category.name}
+                </Badge>
+              </div>
             </div>
             {isOwner && (
               <div className="flex gap-2">
-                <Button variant="outline" size="sm">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="border-[#767676] text-[#484848]"
+                >
                   Edit
                 </Button>
                 <Button variant="destructive" size="sm">
@@ -56,136 +129,111 @@ export default function ActivityDetailModal({
               </div>
             )}
           </div>
-        </DialogHeader>
 
-        {/* Main Content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Left Column - Images */}
-          <div className="space-y-4">
-            <div className="aspect-[4/3] w-full overflow-hidden rounded-lg">
-              <img
-                src={
-                  activity.photos.find((p) => p.isCover)?.url ||
-                  "/placeholder-activity.jpg"
-                }
-                alt={activity.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {activity.photos
-                .filter((p) => !p.isCover)
-                .map((photo) => (
-                  <div
-                    key={photo.id}
-                    className="aspect-square overflow-hidden rounded-md"
-                  >
-                    <img
-                      src={photo.url}
-                      alt="Activity"
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                ))}
-            </div>
-          </div>
-
-          {/* Right Column - Details */}
-          <div className="space-y-6">
-            {/* Activity Details */}
-            <div>
-              <h3 className="font-semibold mb-2">Activity Details</h3>
-              <div className="space-y-2 text-sm">
-                <p>
-                  <span className="font-medium">Category:</span>{" "}
-                  {activity.category.name}
-                </p>
-                <p>
-                  <span className="font-medium">Date:</span>{" "}
-                  {formatDateTime(activity.startDate)}
-                </p>
-                {activity.endDate && (
-                  <p>
-                    <span className="font-medium">End Time:</span>{" "}
-                    {format(activity.endDate, "p")}
+          {/* Key Details */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <Calendar className="h-6 w-6 text-[#767676] mt-1" />
+                <div>
+                  <h3 className="font-medium text-[#484848]">Date and Time</h3>
+                  <p className="text-[#767676]">
+                    {formatDateTime(activity.startDate)}
                   </p>
-                )}
-                <p>
-                  <span className="font-medium">Location:</span>{" "}
-                  {activity.location || "TBD"}
-                </p>
-                <p>
-                  <span className="font-medium">Cost:</span>{" "}
-                  {activity.cost
-                    ? `${activity.currency} ${activity.cost}`
-                    : "Free"}
-                </p>
+                  {activity.endDate && (
+                    <p className="text-[#767676]">
+                      Until {format(activity.endDate, "p")}
+                    </p>
+                  )}
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <MapPin className="h-6 w-6 text-[#767676] mt-1" />
+                <div>
+                  <h3 className="font-medium text-[#484848]">Location</h3>
+                  <p className="text-[#767676]">{activity.location || "TBD"}</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-4">
+                <Users className="h-6 w-6 text-[#767676] mt-1" />
+                <div>
+                  <h3 className="font-medium text-[#484848]">Participants</h3>
+                  <p className="text-[#767676]">
+                    {activity.participants.length} /{" "}
+                    {activity.maxParticipants || "∞"} spots filled
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Description */}
-            <div>
-              <h3 className="font-semibold mb-2">Description</h3>
-              <p className="text-sm whitespace-pre-wrap">
+            <div className="space-y-4">
+              <h3 className="font-semibold text-[20px] text-[#484848]">
+                About this activity
+              </h3>
+              <p className="text-[#484848] whitespace-pre-wrap">
                 {activity.description}
               </p>
-            </div>
 
-            {/* Participant Requirements */}
-            <div>
-              <h3 className="font-semibold mb-2">Participant Requirements</h3>
               <div className="space-y-2">
-                <div className="flex gap-2">
+                <h4 className="font-medium text-[#484848]">Requirements</h4>
+                <div className="flex flex-wrap gap-2">
                   <Badge variant="secondary">
                     {activity.genderPreference.replace("_", " ")}
                   </Badge>
                   <Badge variant="secondary">{activity.skillLevel}</Badge>
                 </div>
                 {activity.additionalRequirements && (
-                  <p className="text-sm">{activity.additionalRequirements}</p>
+                  <p className="text-[#767676] text-sm mt-1">
+                    {activity.additionalRequirements}
+                  </p>
                 )}
               </div>
             </div>
+          </div>
 
-            {/* Participants */}
-            <div>
-              <h3 className="font-semibold mb-2">
-                Participants ({activity.participants.length}/
-                {activity.maxParticipants || "∞"})
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {activity.participants.map((participant) => (
-                  <div
-                    key={participant.id}
-                    className="flex items-center gap-2 bg-secondary p-2 rounded-md text-sm"
-                  >
-                    {participant.user.profilePictureURL ? (
-                      <img
-                        src={participant.user.profilePictureURL}
-                        alt={participant.user.firstName || ""}
-                        className="w-6 h-6 rounded-full"
-                      />
-                    ) : (
-                      <User className="w-6 h-6" />
-                    )}
-                    <span>
+          {/* Participants Section */}
+          <div>
+            <h3 className="font-semibold text-[20px] text-[#484848] mb-4">
+              Current Participants
+            </h3>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {activity.participants.map((participant) => (
+                <div
+                  key={participant.id}
+                  className="flex items-center gap-3 p-3 rounded-lg bg-[#F7F7F7]"
+                >
+                  {participant.user.profilePictureURL ? (
+                    <img
+                      src={participant.user.profilePictureURL}
+                      alt={participant.user.firstName || ""}
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-[#E8E8E8] flex items-center justify-center">
+                      <User className="h-5 w-5 text-[#767676]" />
+                    </div>
+                  )}
+                  <div>
+                    <p className="font-medium text-[#484848] text-sm">
                       {participant.user.firstName} {participant.user.lastName}
-                    </span>
-                    <Badge variant="outline" className="text-xs">
+                    </p>
+                    <Badge variant="outline" className="text-xs mt-1">
                       {participant.status.toLowerCase()}
                     </Badge>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
+          </div>
 
-            {/* Action Button */}
-            {!isOwner && (
-              <Button className="w-full bg-[#FF5A5F] hover:bg-[#FF5A5F]/90">
+          {/* Action Button */}
+          {!isOwner && (
+            <div className="sticky bottom-0 bg-white pt-4 border-t border-[#F2F2F2]">
+              <Button className="w-full h-12 bg-[#FF5A5F] hover:bg-[#FF5A5F]/90 text-white font-medium">
                 Request to Join
               </Button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </DialogContent>
     </Dialog>
