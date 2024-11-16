@@ -17,6 +17,7 @@ import FormInput from "@/components/form/FormInput";
 import ImageInputContainerLegacy from "@/components/form/ImageInputContainerLegacy";
 import { updateProfileAction, updateProfileImageAction } from "@/utils/actions";
 import { SubmitButton } from "@/components/form/Buttons";
+import { MapPin } from "lucide-react";
 
 const LINKEDIN_URL_PLACEHOLDER = "https://www.linkedin.com/in/your-handle-here";
 
@@ -71,12 +72,16 @@ export default function EditProfileScreen({ user }: { user: User }) {
                   />
                 </div>
 
-                <div className="space-y-2 md:col-span-2">
-                  <TextAreaInput
-                    name="bio"
-                    labelText="Bio"
-                    defaultValue={user.bio || ""}
-                  />
+                <div className="space-y-2">
+                  <div className="relative">
+                    <FormInput
+                      type="text"
+                      name="currentCity"
+                      label="Current City"
+                      defaultValue={user.currentCity || ""}
+                      placeholder="Where are you based?"
+                    />
+                  </div>
                 </div>
 
                 <div className="space-y-2">
@@ -122,6 +127,14 @@ export default function EditProfileScreen({ user }: { user: User }) {
                     name="currentCompany"
                     label="Current Company"
                     defaultValue={user.currentCompany || ""}
+                  />
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <TextAreaInput
+                    name="bio"
+                    labelText="Bio"
+                    defaultValue={user.bio || ""}
                   />
                 </div>
               </div>

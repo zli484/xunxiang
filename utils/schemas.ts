@@ -20,6 +20,10 @@ export const UserSchema = z.object({
       message: "Last name must be at most 20 characters long",
     }),
 
+  currentCity: z.string().max(20, {
+    message: "Current city must be at most 20 characters long",
+  }),
+
   bio: z.string().max(5000, {
     message: "Bio must be at most 5000 characters long",
   }),
