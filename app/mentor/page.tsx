@@ -58,7 +58,9 @@ export default async function MembersPage() {
     },
   });
 
-  const savedUserIds = userSaves.map((userSave) => userSave.saveReceiverUserId);
+  const savedUserIds = userSaves.map(
+    (userSave: any) => userSave.saveReceiverUserId
+  );
 
   return (
     <AllMentorScreen

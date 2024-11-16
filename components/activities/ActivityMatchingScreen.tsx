@@ -1,47 +1,28 @@
+"use client";
+
+import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, Filter } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { ActivityExtended } from "@/lib/types";
+import { formatDistanceToNow } from "date-fns";
+import ActivityDetailModal from "./ActivityDetailModal";
 
-const activities = [
-  {
-    title: "Basketball Game",
-    date: "Next Saturday",
-    participants: "3/8",
-    location: "Campus Gym",
-    imageUrl:
-      "https://images.unsplash.com/photo-1546519638-68e109498ffc?q=80&w=2080&auto=format&fit=crop",
-    organizer: "Alex Thompson",
-    price: "Free",
-  },
-  {
-    title: "Study Group: Machine Learning",
-    date: "Every Tuesday",
-    participants: "4/6",
-    location: "Library Room 204",
-    imageUrl:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=2071&auto=format&fit=crop",
-    organizer: "Sarah Chen",
-    price: "Free",
-  },
-  {
-    title: "Photography Walk",
-    date: "This Sunday",
-    participants: "2/5",
-    location: "City Park",
-    imageUrl:
-      "https://images.unsplash.com/photo-1542038784456-1ea8e935640e?q=80&w=2070&auto=format&fit=crop",
-    organizer: "Michael Park",
-    price: "$5",
-  },
-];
+interface ActivityMatchingScreenProps {
+  activities: ActivityExtended[];
+  categories: string[];
+  currentUserId: string;
+}
 
-const activitiesData = [
-  // ... existing activities ...
-  // (repeated several times to simulate more data)
-].concat(Array(15).fill(activities).flat()); // Simulate more activities for testing
+export default function ActivityMatchingScreen({
+  activities,
+  categories,
+  currentUserId,
+}: ActivityMatchingScreenProps) {
+  const [selectedActivity, setSelectedActivity] =
+    useState<ActivityExtended | null>(null);
 
-export default function ActivityMatchingScreen() {
   return (
     <div className="container mx-auto px-6 py-8 max-w-[1400px]">
       {/* Header Section */}
@@ -51,7 +32,7 @@ export default function ActivityMatchingScreen() {
             Activities
           </h1>
           <p className="text-[#767676] text-base">
-            {activitiesData.length} activities available
+            {activities.length} activities available
           </p>
         </div>
         <Button className="bg-[#FF5A5F] hover:bg-[#FF5A5F]/90 text-white px-4 h-10 rounded-lg">
@@ -77,34 +58,38 @@ export default function ActivityMatchingScreen() {
 
       {/* Quick Filters */}
       <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-        {["All", "Today", "This Week", "Free", "Sports", "Study", "Social"].map(
-          (filter) => (
-            <Button
-              key={filter}
-              variant={filter === "All" ? "default" : "outline"}
-              className="px-4 py-1 h-8 whitespace-nowrap"
-            >
-              {filter}
-            </Button>
-          )
-        )}
+        {["All", ...categories].map((filter) => (
+          <Button
+            key={filter}
+            variant={filter === "All" ? "default" : "outline"}
+            className="px-4 py-1 h-8 whitespace-nowrap"
+          >
+            {filter}
+          </Button>
+        ))}
       </div>
 
       {/* Activities Grid */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-        {activitiesData.map((activity, index) => (
+        {activities.map((activity) => (
           <Card
-            key={`${activity.title}-${index}`}
-            className="overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow duration-300"
+            key={activity.id}
+            className="overflow-hidden border-none shadow-sm hover:shadow-md transition-shadow duration-300 cursor-pointer"
+            onClick={() => setSelectedActivity(activity)}
           >
             <div className="relative aspect-[4/3] w-full overflow-hidden">
               <img
-                src={activity.imageUrl}
+                src={
+                  activity.photos.find((p) => p.isCover)?.url ||
+                  "/placeholder-activity.jpg"
+                }
                 alt={activity.title}
                 className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
               />
               <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-xs font-medium">
-                {activity.price}
+                {activity.cost
+                  ? `${activity.currency} ${activity.cost}`
+                  : "Free"}
               </div>
             </div>
             <div className="p-3">
@@ -112,26 +97,60 @@ export default function ActivityMatchingScreen() {
                 {activity.title}
               </h3>
               <p className="text-[#767676] text-xs mb-2 truncate">
-                Hosted by {activity.organizer}
+                Hosted by {activity.createdByUser.firstName}{" "}
+                {activity.createdByUser.lastName}
               </p>
               <div className="space-y-1 text-[#484848] text-xs">
                 <div className="flex items-center gap-1">
                   <span>📅</span>
-                  {activity.date}
+                  {activity.startDate
+                    ? formatDistanceToNow(activity.startDate, {
+                        addSuffix: true,
+                      })
+                    : "Flexible"}
                 </div>
                 <div className="flex items-center gap-1">
                   <span>👥</span>
-                  {activity.participants}
+                  {activity.participants.length}/
+                  {activity.maxParticipants || "∞"}
                 </div>
                 <div className="flex items-center gap-1 truncate">
                   <span>📍</span>
-                  {activity.location}
+                  {activity.location || "TBD"}
                 </div>
               </div>
+
+              {/* Status Badge */}
+              {activity.status !== "PUBLISHED" && (
+                <div className="mt-2">
+                  <span
+                    className={`text-xs px-2 py-1 rounded-full ${
+                      activity.status === "CANCELLED"
+                        ? "bg-red-100 text-red-800"
+                        : activity.status === "COMPLETED"
+                        ? "bg-green-100 text-green-800"
+                        : "bg-yellow-100 text-yellow-800"
+                    }`}
+                  >
+                    {activity.status.charAt(0) +
+                      activity.status.slice(1).toLowerCase()}
+                  </span>
+                </div>
+              )}
             </div>
           </Card>
         ))}
       </div>
+
+      {/* Activity Detail Modal */}
+      {selectedActivity && (
+        <ActivityDetailModal
+          activity={selectedActivity}
+          isOpen={!!selectedActivity}
+          onClose={() => setSelectedActivity(null)}
+          isOwner={selectedActivity.createdByUserId === currentUserId}
+        />
+      )}
 
       {/* Pagination */}
       <div className="mt-8 flex justify-center items-center gap-2">

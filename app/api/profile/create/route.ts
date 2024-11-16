@@ -24,6 +24,7 @@ export async function POST(req: Request) {
     }
 
     const userData = {
+      email: clerkUser.emailAddresses[0].emailAddress,
       firstName: formData.get("firstName") as string,
       lastName: formData.get("lastName") as string,
       bio: formData.get("bio") as string,
