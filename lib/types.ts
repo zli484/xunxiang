@@ -54,3 +54,15 @@ export type ActivityExtended = Activity & {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export interface Book {
+  id: string;
+  title: string;
+  authors: string[];
+  coverUrl: string;
+  publishedYear?: string;
+}
+
+export type UserExtended = User & {
+  favoriteBooks: Book[];
+};

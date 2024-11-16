@@ -131,16 +131,42 @@ export const updateProfileAction = async (
 ): Promise<{ message: string }> => {
   const user = await currentUser();
 
-  console.log("raw data is", formData);
-
   if (!user) {
     return { message: "Please login to update your profile" };
   }
 
   try {
     const rawData = Object.fromEntries(formData);
+    const books = JSON.parse(rawData.favoriteBooks as string);
+
+    // First, ensure all books exist in the database
+    await Promise.all(
+      books.map(async (book: any) => {
+        await prisma.book.upsert({
+          where: { id: book.id },
+          update: {
+            title: book.title,
+            authors: book.authors,
+            coverUrl: book.coverUrl,
+            publishedYear: book.publishedYear,
+          },
+          create: {
+            id: book.id,
+            title: book.title,
+            authors: book.authors,
+            coverUrl: book.coverUrl,
+            publishedYear: book.publishedYear,
+          },
+        });
+      })
+    );
+
+    // Update user profile with book connections
     //@ts-ignore
-    const validatedFields = validateWithZodSchema(UserSchema, rawData);
+    const validatedFields = validateWithZodSchema(UserSchema, {
+      ...rawData,
+      favoriteBooks: undefined, // Remove favoriteBooks from general update
+    });
 
     await prisma.user.update({
       where: {
@@ -148,12 +174,16 @@ export const updateProfileAction = async (
       },
       data: {
         ...validatedFields,
+        favoriteBooks: {
+          set: books.map((book: any) => ({ id: book.id })),
+        },
       },
     });
 
     revalidatePath("/profile");
     return { message: "Profile updated successfully" };
   } catch (error) {
+    console.error("Error updating profile:", error);
     return renderError(error);
   }
 };

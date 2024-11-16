@@ -17,11 +17,55 @@ import FormInput from "@/components/form/FormInput";
 import ImageInputContainerLegacy from "@/components/form/ImageInputContainerLegacy";
 import { updateProfileAction, updateProfileImageAction } from "@/utils/actions";
 import { SubmitButton } from "@/components/form/Buttons";
-import { MapPin } from "lucide-react";
+import { MapPin, X } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import BookSearchInput from "@/components/books/BookSearchInput";
+import { UserExtended } from "@/lib/types";
 
 const LINKEDIN_URL_PLACEHOLDER = "https://www.linkedin.com/in/your-handle-here";
 
-export default function EditProfileScreen({ user }: { user: User }) {
+interface Book {
+  id: string;
+  title: string;
+  authors: string[];
+  coverUrl: string;
+  publishedYear?: string;
+}
+
+export default function EditProfileScreen({ user }: { user: UserExtended }) {
+  const [mounted, setMounted] = useState(false);
+  const [selectedBooks, setSelectedBooks] = useState<Book[]>([]);
+
+  useEffect(() => {
+    setMounted(true);
+    if (user.favoriteBooks && user.favoriteBooks.length > 0) {
+      setSelectedBooks(user.favoriteBooks);
+    }
+  }, [user.favoriteBooks]);
+
+  const handleAddBook = (book: Book) => {
+    if (selectedBooks.length < 5) {
+      if (!selectedBooks.some((selectedBook) => selectedBook.id === book.id)) {
+        setSelectedBooks([...selectedBooks, book]);
+      } else {
+        toast.error("Book already added");
+      }
+    } else {
+      toast.error("Maximum books reached");
+    }
+  };
+
+  const handleRemoveBook = (indexToRemove: number) => {
+    setSelectedBooks(
+      selectedBooks.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <section className="min-h-[calc(100vh-57px)] bg-background/50 py-16">
       <div className="container max-w-4xl mx-auto px-4">
@@ -136,6 +180,60 @@ export default function EditProfileScreen({ user }: { user: User }) {
                     labelText="Bio"
                     defaultValue={user.bio || ""}
                   />
+                </div>
+
+                <div className="space-y-4 md:col-span-2">
+                  <h3 className="text-[18px] font-semibold text-[#484848]">
+                    Favorite Books
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                      {selectedBooks.map((book, index) => (
+                        <div
+                          key={book.id}
+                          className="group flex items-center gap-3 bg-[#F7F7F7] p-2 rounded-lg"
+                        >
+                          <img
+                            src={book.coverUrl}
+                            alt={book.title}
+                            className="w-8 h-12 object-cover rounded"
+                          />
+                          <div className="flex flex-col">
+                            <span className="text-[#484848] text-sm font-medium">
+                              {book.title}
+                            </span>
+                            <span className="text-[#767676] text-xs">
+                              {book.authors.join(", ")}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveBook(index)}
+                            className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="h-4 w-4 text-[#767676] hover:text-[#FF5A5F]" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    {selectedBooks.length < 5 && (
+                      <BookSearchInput
+                        onSelect={handleAddBook}
+                        isDisabled={selectedBooks.length >= 5}
+                      />
+                    )}
+
+                    <input
+                      type="hidden"
+                      name="favoriteBooks"
+                      value={JSON.stringify(selectedBooks)}
+                    />
+
+                    <p className="text-[#767676] text-sm">
+                      Add up to 5 of your favorite books
+                    </p>
+                  </div>
                 </div>
               </div>
 

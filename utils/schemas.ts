@@ -70,7 +70,6 @@ export function validateWithZodSchema<T>(
 export const imageSchema = z.object({
   image: validateFile(),
 });
-
 function validateFile() {
   const maxUploadSize = 5 * 1024 * 1024; // Set the max upload size to 5 MB
   const acceptedFilesTypes = ["image/"];

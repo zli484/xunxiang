@@ -1,54 +1,31 @@
-// import { getSession } from "@/lib/supabaseSession";
 import { fetchUserByEmailHelper } from "@/lib/user/helpers";
 import { cookies } from "next/headers";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import prisma from "@/lib/services/prisma";
 import ProfileScreenForSelf from "@/components/profile/screens/profileScreenForSelf";
-import { UserWithProfiles } from "@/lib/types";
+import { UserExtended } from "@/lib/types";
 import { currentUser } from "@clerk/nextjs/server";
-export default async function ProfilePage({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const clerkUser = await currentUser();
+import { redirect } from "next/navigation";
 
-  const clerkId = clerkUser?.id;
+export default async function ProfilePage() {
+  const user = await currentUser();
 
-  if (!clerkId) {
-    throw new Error("User not found");
+  if (!user) {
+    redirect("/sign-up");
   }
 
-  const loggedInUser = await prisma.user.findUnique({
+  const profileUser = await prisma.user.findUnique({
     where: {
-      clerkId,
+      clerkId: user.id,
     },
     include: {
-      mentorProfile: true,
-      menteeProfile: true,
+      favoriteBooks: true,
     },
   });
 
-  const userWithProfiles = await prisma.user.findUnique({
-    where: {
-      clerkId,
-    },
-    include: {
-      mentorProfile: true,
-      menteeProfile: true,
-    },
-  });
-
-  if (!userWithProfiles) {
-    throw new Error("User not found");
+  if (!profileUser) {
+    redirect("/profile/create");
   }
 
-  return (
-    <ProfileScreenForSelf
-      user={userWithProfiles as UserWithProfiles}
-      currentUser={loggedInUser as UserWithProfiles}
-    />
-  );
-
-  // return <Profile user={user} isProfileOwner={true} />;
+  return <ProfileScreenForSelf user={profileUser as UserExtended} />;
 }

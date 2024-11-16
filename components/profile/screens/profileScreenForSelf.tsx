@@ -11,13 +11,15 @@ import {
   School,
   Calendar,
   Link as LinkIcon,
+  Book as BookIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import QuestionsSection from "../sections/questionsSection";
+import { UserExtended } from "@/lib/types";
 
 interface ProfileScreenForSelfProps {
-  user: User;
+  user: UserExtended;
 }
 
 export default function ProfileScreenForSelf({
@@ -250,6 +252,49 @@ export default function ProfileScreenForSelf({
                     </a>
                   )}
                   {/* Add similar styled links for other social media */}
+                </div>
+              </section>
+            )}
+
+            {user.favoriteBooks && user.favoriteBooks.length > 0 && (
+              <section>
+                <div className="flex items-center gap-3 mb-6">
+                  <BookIcon className="h-6 w-6 text-[#FF5A5F]" />
+                  <h2 className="text-[24px] font-semibold text-[#484848]">
+                    Favorite Books
+                  </h2>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                  {user.favoriteBooks.map((book) => (
+                    <div
+                      key={book.id}
+                      className="group flex flex-col items-center text-center space-y-3"
+                    >
+                      {/* Book Cover */}
+                      <div className="relative aspect-[2/3] w-full max-w-[160px] overflow-hidden rounded-lg shadow-md transition-all duration-300 group-hover:shadow-lg">
+                        <img
+                          src={book.coverUrl}
+                          alt={book.title}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+
+                      {/* Book Info */}
+                      <div className="space-y-1 w-full max-w-[160px]">
+                        <h3 className="font-medium text-[#484848] text-sm line-clamp-2 leading-snug">
+                          {book.title}
+                        </h3>
+                        <p className="text-[#767676] text-xs line-clamp-1">
+                          {book.authors.join(", ")}
+                        </p>
+                        {book.publishedYear && (
+                          <p className="text-[#767676] text-xs">
+                            {book.publishedYear}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </section>
             )}
