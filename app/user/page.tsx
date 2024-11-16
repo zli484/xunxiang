@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import UserScreen from "@/components/screens/user-screen";
 import prisma from "@/lib/services/prisma";
 import { currentUser } from "@clerk/nextjs/server";
+import { UserSave } from "@prisma/client";
 
 export default async function User() {
   // const cookieStore = cookies();
@@ -53,7 +54,9 @@ export default async function User() {
     },
   });
 
-  const savedUserIds = userSaves.map((userSave) => userSave.saveReceiverUserId);
+  const savedUserIds = userSaves.map(
+    (userSave: { saveReceiverUserId: string }) => userSave.saveReceiverUserId
+  );
 
   return (
     <UserScreen
