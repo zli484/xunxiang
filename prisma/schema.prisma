@@ -68,6 +68,9 @@ model User {
   questionsAsked      Question[]             @relation("questionsAsked")
   questionsReceived   Question[]             @relation("questionsReceived")
 
+  createdActivities     Activity[]           @relation("createdActivities")
+  participatingActivities ActivityParticipant[] @relation("participatingActivities")
+
   @@map("users")
 }
 
@@ -223,4 +226,123 @@ enum ApplicationStatus {
   PENDING
   ACCEPTED
   REJECTED
+}
+
+enum ActivityStatus {
+  DRAFT
+  PUBLISHED
+  CANCELLED
+  COMPLETED
+}
+
+enum ParticipantGenderPreference {
+  ANY
+  MALE_ONLY
+  FEMALE_ONLY
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+  ANY
+}
+
+model Activity {
+  id              String         @id @default(cuid())
+  title           String
+  description     String
+  cost            Decimal?       @db.Decimal(10, 2)
+  currency        String?        @default("USD")
+  startDate       DateTime?
+  endDate         DateTime?
+  location        String?
+  maxParticipants Int?
+  status          ActivityStatus @default(PUBLISHED)
+  
+  // Participant expectations
+  genderPreference ParticipantGenderPreference @default(ANY)
+  skillLevel       SkillLevel                  @default(ANY)
+  additionalRequirements String?
+
+  // Relations
+  createdByUserId String
+  createdByUser   User          @relation("createdActivities", fields: [createdByUserId], references: [id], onDelete: Cascade)
+  
+  // Activity category (e.g., Sports, Study, Social)
+  categoryId      String
+  category        ActivityCategory @relation(fields: [categoryId], references: [id])
+  
+  // Photos
+  photos          ActivityPhoto[]
+  
+  // Participants
+  participants    ActivityParticipant[]
+  
+  // Timestamps
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  deletedAt       DateTime?     // Soft delete
+
+  @@map("activities")
+  @@index([createdByUserId])
+  @@index([categoryId])
+  @@index([status])
+}
+
+model ActivityCategory {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  description String?
+  activities  Activity[]
+  
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("activity_categories")
+}
+
+model ActivityPhoto {
+  id         String   @id @default(cuid())
+  url        String
+  isCover    Boolean  @default(false)
+  
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("activity_photos")
+  @@index([activityId])
+  @@index([isCover])
+}
+
+enum ParticipantStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  WITHDRAWN
+}
+
+model ActivityParticipant {
+  id         String            @id @default(cuid())
+  status     ParticipantStatus @default(PENDING)
+  message    String?           // Optional message when applying
+  
+  userId     String
+  user       User     @relation("participatingActivities", fields: [userId], references: [id], onDelete: Cascade)
+  
+  activityId String
+  activity   Activity @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([userId, activityId]) // Prevent duplicate participations
+  @@map("activity_participants")
+  @@index([userId])
+  @@index([activityId])
+  @@index([status])
 }

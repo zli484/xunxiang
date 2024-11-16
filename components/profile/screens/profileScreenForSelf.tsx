@@ -18,6 +18,8 @@ export default function ProfileScreenForSelf({
   user: UserWithProfiles;
   currentUser: UserWithProfiles;
 }) {
+  console.log("user", user);
+
   return (
     <div className="container mx-auto p-12">
       <Toaster position="top-right" />
