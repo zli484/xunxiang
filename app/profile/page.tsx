@@ -20,6 +20,7 @@ export default async function ProfilePage() {
     },
     include: {
       favoriteBooks: true,
+      favoriteMovies: true,
     },
   });
 

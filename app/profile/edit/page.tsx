@@ -16,6 +16,7 @@ export default async function EditProfilePage() {
     },
     include: {
       favoriteBooks: true,
+      favoriteMovies: true,
     },
   });
 

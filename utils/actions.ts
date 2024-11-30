@@ -138,8 +138,9 @@ export const updateProfileAction = async (
   try {
     const rawData = Object.fromEntries(formData);
     const books = JSON.parse(rawData.favoriteBooks as string);
+    const movies = JSON.parse(rawData.favoriteMovies as string);
 
-    // First, ensure all books exist in the database
+    // Handle books
     await Promise.all(
       books.map(async (book: any) => {
         await prisma.book.upsert({
@@ -161,11 +162,34 @@ export const updateProfileAction = async (
       })
     );
 
-    // Update user profile with book connections
+    // Handle movies
+    await Promise.all(
+      movies.map(async (movie: any) => {
+        await prisma.movie.upsert({
+          where: { id: movie.id },
+          update: {
+            title: movie.title,
+            directors: movie.directors,
+            coverUrl: movie.coverUrl,
+            releaseYear: movie.releaseYear,
+          },
+          create: {
+            id: movie.id,
+            title: movie.title,
+            directors: movie.directors,
+            coverUrl: movie.coverUrl,
+            releaseYear: movie.releaseYear,
+          },
+        });
+      })
+    );
+
+    // Update user profile
     //@ts-ignore
     const validatedFields = validateWithZodSchema(UserSchema, {
       ...rawData,
-      favoriteBooks: undefined, // Remove favoriteBooks from general update
+      favoriteBooks: undefined,
+      favoriteMovies: undefined,
     });
 
     await prisma.user.update({
@@ -176,6 +200,9 @@ export const updateProfileAction = async (
         ...validatedFields,
         favoriteBooks: {
           set: books.map((book: any) => ({ id: book.id })),
+        },
+        favoriteMovies: {
+          set: movies.map((movie: any) => ({ id: movie.id })),
         },
       },
     });

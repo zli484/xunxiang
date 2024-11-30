@@ -22,27 +22,28 @@ import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import BookSearchInput from "@/components/books/BookSearchInput";
 import { UserExtended } from "@/lib/types";
+import MovieSearchInput from "@/components/movies/MovieSearchInput";
 
 const LINKEDIN_URL_PLACEHOLDER = "https://www.linkedin.com/in/your-handle-here";
 
-interface Book {
-  id: string;
-  title: string;
-  authors: string[];
-  coverUrl: string;
-  publishedYear?: string;
-}
+import { Book } from "@prisma/client";
+
+import { Movie } from "@prisma/client";
 
 export default function EditProfileScreen({ user }: { user: UserExtended }) {
   const [mounted, setMounted] = useState(false);
   const [selectedBooks, setSelectedBooks] = useState<Book[]>([]);
+  const [selectedMovies, setSelectedMovies] = useState<Movie[]>([]);
 
   useEffect(() => {
     setMounted(true);
     if (user.favoriteBooks && user.favoriteBooks.length > 0) {
-      setSelectedBooks(user.favoriteBooks);
+      setSelectedBooks(user.favoriteBooks as Book[]);
     }
-  }, [user.favoriteBooks]);
+    if (user.favoriteMovies && user.favoriteMovies.length > 0) {
+      setSelectedMovies(user.favoriteMovies as Movie[]);
+    }
+  }, [user.favoriteBooks, user.favoriteMovies]);
 
   const handleAddBook = (book: Book) => {
     if (selectedBooks.length < 5) {
@@ -59,6 +60,26 @@ export default function EditProfileScreen({ user }: { user: UserExtended }) {
   const handleRemoveBook = (indexToRemove: number) => {
     setSelectedBooks(
       selectedBooks.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+  const handleAddMovie = (movie: Movie) => {
+    if (selectedMovies.length < 5) {
+      if (
+        !selectedMovies.some((selectedMovie) => selectedMovie.id === movie.id)
+      ) {
+        setSelectedMovies([...selectedMovies, movie]);
+      } else {
+        toast.error("Movie already added");
+      }
+    } else {
+      toast.error("Maximum movies reached");
+    }
+  };
+
+  const handleRemoveMovie = (indexToRemove: number) => {
+    setSelectedMovies(
+      selectedMovies.filter((_, index) => index !== indexToRemove)
     );
   };
 
@@ -232,6 +253,60 @@ export default function EditProfileScreen({ user }: { user: UserExtended }) {
 
                     <p className="text-[#767676] text-sm">
                       Add up to 5 of your favorite books
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4 md:col-span-2">
+                  <h3 className="text-[18px] font-semibold text-[#484848]">
+                    Favorite Movies
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="flex flex-wrap gap-2">
+                      {selectedMovies.map((movie, index) => (
+                        <div
+                          key={movie.id}
+                          className="group flex items-center gap-3 bg-[#F7F7F7] p-2 rounded-lg"
+                        >
+                          <img
+                            src={movie.coverUrl}
+                            alt={movie.title}
+                            className="w-8 h-12 object-cover rounded"
+                          />
+                          <div className="flex flex-col">
+                            <span className="text-[#484848] text-sm font-medium">
+                              {movie.title}
+                            </span>
+                            <span className="text-[#767676] text-xs">
+                              {movie.releaseYear}
+                            </span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveMovie(index)}
+                            className="ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          >
+                            <X className="h-4 w-4 text-[#767676] hover:text-[#FF5A5F]" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    {selectedMovies.length < 5 && (
+                      <MovieSearchInput
+                        onSelect={handleAddMovie}
+                        isDisabled={selectedMovies.length >= 5}
+                      />
+                    )}
+
+                    <input
+                      type="hidden"
+                      name="favoriteMovies"
+                      value={JSON.stringify(selectedMovies)}
+                    />
+
+                    <p className="text-[#767676] text-sm">
+                      Add up to 5 of your favorite movies
                     </p>
                   </div>
                 </div>

@@ -2,80 +2,58 @@
 
 import { useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { X, Loader2, Search } from "lucide-react";
-import { Book } from "@prisma/client";
+import { Movie } from "@prisma/client";
 
-interface BookSearchInputProps {
-  onSelect: (book: Book) => void;
+interface MovieSearchInputProps {
+  onSelect: (movie: Movie) => void;
   isDisabled?: boolean;
 }
 
-// Define a type for the Google Books API response
-interface GoogleBookResult {
-  id: string;
-  volumeInfo: {
-    title: string;
-    authors?: string[];
-    imageLinks?: {
-      thumbnail?: string;
-    };
-    publishedDate?: string;
-  };
-}
-
-export default function BookSearchInput({
+export default function MovieSearchInput({
   onSelect,
   isDisabled,
-}: BookSearchInputProps) {
+}: MovieSearchInputProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [books, setBooks] = useState<Book[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [showResults, setShowResults] = useState(false);
 
-  const searchBooks = async (query: string) => {
+  const searchMovies = async (query: string) => {
     if (!query || query.length < 2) {
-      setBooks([]);
+      setMovies([]);
       return;
     }
 
     setIsLoading(true);
     try {
       const response = await fetch(
-        `https://www.googleapis.com/books/v1/volumes?q=${encodeURIComponent(
-          query
-        )}&maxResults=5&key=${process.env.NEXT_PUBLIC_GOOGLE_BOOKS_API_KEY}`
+        `https://api.themoviedb.org/3/search/movie?api_key=${
+          process.env.NEXT_PUBLIC_TMDB_API_KEY
+        }&query=${encodeURIComponent(query)}&language=en-US`
       );
 
-      if (!response.ok) throw new Error("Failed to fetch books");
+      if (!response.ok) throw new Error("Failed to fetch movies");
 
       const data = await response.json();
 
-      if (data.items && Array.isArray(data.items)) {
-        const formattedBooks: Book[] = data.items
-          .filter((item: GoogleBookResult) => item?.volumeInfo)
-          .map((item: GoogleBookResult) => ({
-            id: item.id,
-            title: item.volumeInfo.title || "Unknown Title",
-            authors: Array.isArray(item.volumeInfo.authors)
-              ? item.volumeInfo.authors
-              : ["Unknown Author"],
-            coverUrl:
-              item.volumeInfo.imageLinks?.thumbnail || "/placeholder-book.png",
-            publishedYear: item.volumeInfo.publishedDate
-              ? item.volumeInfo.publishedDate.split("-")[0]
-              : null,
-            // Add required Prisma fields with default values
-            createdAt: new Date(),
-            updatedAt: new Date(),
+      if (data.results) {
+        const formattedMovies: Movie[] = data.results
+          .filter((item: any) => item.title && item.release_date)
+          .map((item: any) => ({
+            id: item.id.toString(),
+            title: item.title,
+            directors: [], // We'll need an additional API call to get directors
+            coverUrl: `https://image.tmdb.org/t/p/w500${item.poster_path}`,
+            releaseYear: item.release_date.split("-")[0],
           }));
-        setBooks(formattedBooks);
+        setMovies(formattedMovies);
       } else {
-        setBooks([]);
+        setMovies([]);
       }
     } catch (error) {
-      console.error("Error fetching books:", error);
-      setBooks([]);
+      console.error("Error fetching movies:", error);
+      setMovies([]);
     } finally {
       setIsLoading(false);
     }
@@ -87,17 +65,17 @@ export default function BookSearchInput({
     setShowResults(true);
 
     if (query.length >= 2) {
-      await searchBooks(query);
+      await searchMovies(query);
     } else {
-      setBooks([]);
+      setMovies([]);
     }
   };
 
-  const handleSelectBook = (book: Book) => {
-    onSelect(book);
-    setSearchQuery(book.title);
+  const handleSelectMovie = (movie: Movie) => {
+    onSelect(movie);
+    setSearchQuery(movie.title);
     setShowResults(false);
-    setBooks([]);
+    setMovies([]);
   };
 
   return (
@@ -106,7 +84,7 @@ export default function BookSearchInput({
         <Input
           value={searchQuery}
           onChange={handleSearch}
-          placeholder="Search for a book..."
+          placeholder="Search for a movie..."
           className="w-full h-10 pl-10 pr-10 border-[#F2F2F2] focus:border-[#FF5A5F]"
           disabled={isDisabled}
         />
@@ -117,7 +95,7 @@ export default function BookSearchInput({
           <button
             onClick={() => {
               setSearchQuery("");
-              setBooks([]);
+              setMovies([]);
               setShowResults(false);
             }}
             className="absolute right-3 top-1/2 transform -translate-y-1/2"
@@ -127,24 +105,25 @@ export default function BookSearchInput({
         ) : null}
       </div>
 
-      {showResults && books.length > 0 && (
+      {showResults && movies.length > 0 && (
         <div className="absolute z-50 w-full mt-1 bg-white rounded-md shadow-lg border border-[#F2F2F2] max-h-[300px] overflow-y-auto">
-          {books.map((book) => (
+          {movies.map((movie) => (
             <button
-              key={book.id}
+              key={movie.id}
               className="w-full px-4 py-2 flex items-center gap-3 hover:bg-[#F7F7F7] transition-colors"
-              onClick={() => handleSelectBook(book)}
+              onClick={() => handleSelectMovie(movie)}
             >
               <img
-                src={book.coverUrl}
-                alt={book.title}
+                src={movie.coverUrl}
+                alt={movie.title}
                 className="w-12 h-16 object-cover rounded"
               />
               <div className="flex flex-col items-start text-left">
-                <span className="font-medium text-[#484848]">{book.title}</span>
+                <span className="font-medium text-[#484848]">
+                  {movie.title}
+                </span>
                 <span className="text-sm text-[#767676]">
-                  {book.authors.join(", ")}
-                  {book.publishedYear && ` (${book.publishedYear})`}
+                  {movie.releaseYear}
                 </span>
               </div>
             </button>

@@ -63,6 +63,15 @@ export interface Book {
   publishedYear?: string;
 }
 
+export interface Movie {
+  id: string;
+  title: string;
+  directors: string[];
+  coverUrl: string;
+  releaseYear?: string;
+}
+
 export type UserExtended = User & {
   favoriteBooks: Book[];
+  favoriteMovies: Movie[];
 };

@@ -12,6 +12,7 @@ import {
   Calendar,
   Link as LinkIcon,
   Book as BookIcon,
+  Film,
 } from "lucide-react";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -290,6 +291,51 @@ export default function ProfileScreenForSelf({
                         {book.publishedYear && (
                           <p className="text-[#767676] text-xs">
                             {book.publishedYear}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {user.favoriteMovies && user.favoriteMovies.length > 0 && (
+              <section>
+                <div className="flex items-center gap-3 mb-6">
+                  <Film className="h-6 w-6 text-[#FF5A5F]" />
+                  <h2 className="text-[24px] font-semibold text-[#484848]">
+                    Favorite Movies
+                  </h2>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                  {user.favoriteMovies.map((movie) => (
+                    <div
+                      key={movie.id}
+                      className="group flex flex-col items-center text-center space-y-3"
+                    >
+                      {/* Movie Poster */}
+                      <div className="relative aspect-[2/3] w-full max-w-[160px] overflow-hidden rounded-lg shadow-md transition-all duration-300 group-hover:shadow-lg">
+                        <img
+                          src={movie.coverUrl}
+                          alt={movie.title}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                        />
+                      </div>
+
+                      {/* Movie Info */}
+                      <div className="space-y-1 w-full max-w-[160px]">
+                        <h3 className="font-medium text-[#484848] text-sm line-clamp-2 leading-snug">
+                          {movie.title}
+                        </h3>
+                        {movie.directors.length > 0 && (
+                          <p className="text-[#767676] text-xs line-clamp-1">
+                            {movie.directors.join(", ")}
+                          </p>
+                        )}
+                        {movie.releaseYear && (
+                          <p className="text-[#767676] text-xs">
+                            {movie.releaseYear}
                           </p>
                         )}
                       </div>
