@@ -71,6 +71,9 @@ model User {
   createdActivities     Activity[]           @relation("createdActivities")
   participatingActivities ActivityParticipant[] @relation("participatingActivities")
 
+  favoriteBooks        Book[]               @relation("UserFavoriteBooks")
+  favoriteMovies       Movie[]              @relation("UserFavoriteMovies")
+
   @@map("users")
 }
 
@@ -345,4 +348,32 @@ model ActivityParticipant {
   @@index([userId])
   @@index([activityId])
   @@index([status])
+}
+
+model Book {
+  id            String   @id
+  title         String
+  authors       String[]
+  coverUrl      String
+  publishedYear String?
+  users         User[]   @relation("UserFavoriteBooks")
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("books")
+}
+
+model Movie {
+  id            String   @id
+  title         String
+  directors     String[]
+  coverUrl      String
+  releaseYear   String?
+  users         User[]   @relation("UserFavoriteMovies")
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("movies")
 }

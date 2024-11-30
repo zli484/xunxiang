@@ -184,6 +184,10 @@ export default function ProfileForm({ user }: { user: User }) {
                       placeholder="2024"
                       value={formData.graduationYear?.toString() || ""}
                       onChange={handleChange}
+                      onWheel={(e) => {
+                        //@ts-ignore
+                        e.target.blur();
+                      }} // Prevent value change on scroll
                     />
                   </div>
                 </div>

@@ -131,16 +131,66 @@ export const updateProfileAction = async (
 ): Promise<{ message: string }> => {
   const user = await currentUser();
 
-  console.log("raw data is", formData);
-
   if (!user) {
     return { message: "Please login to update your profile" };
   }
 
   try {
     const rawData = Object.fromEntries(formData);
+    const books = JSON.parse(rawData.favoriteBooks as string);
+    const movies = JSON.parse(rawData.favoriteMovies as string);
+
+    // Handle books
+    await Promise.all(
+      books.map(async (book: any) => {
+        await prisma.book.upsert({
+          where: { id: book.id },
+          update: {
+            title: book.title,
+            authors: book.authors,
+            coverUrl: book.coverUrl,
+            publishedYear: book.publishedYear,
+          },
+          create: {
+            id: book.id,
+            title: book.title,
+            authors: book.authors,
+            coverUrl: book.coverUrl,
+            publishedYear: book.publishedYear,
+          },
+        });
+      })
+    );
+
+    // Handle movies
+    await Promise.all(
+      movies.map(async (movie: any) => {
+        await prisma.movie.upsert({
+          where: { id: movie.id },
+          update: {
+            title: movie.title,
+            directors: movie.directors,
+            coverUrl: movie.coverUrl,
+            releaseYear: movie.releaseYear,
+          },
+          create: {
+            id: movie.id,
+            title: movie.title,
+            directors: movie.directors,
+            coverUrl: movie.coverUrl,
+            releaseYear: movie.releaseYear,
+          },
+        });
+      })
+    );
+
+    // Update user profile
     //@ts-ignore
-    const validatedFields = validateWithZodSchema(UserSchema, rawData);
+    const validatedFields = validateWithZodSchema(UserSchema, {
+      ...rawData,
+      favoriteBooks: undefined,
+      favoriteMovies: undefined,
+    });
 
     await prisma.user.update({
       where: {
@@ -148,12 +198,19 @@ export const updateProfileAction = async (
       },
       data: {
         ...validatedFields,
+        favoriteBooks: {
+          set: books.map((book: any) => ({ id: book.id })),
+        },
+        favoriteMovies: {
+          set: movies.map((movie: any) => ({ id: movie.id })),
+        },
       },
     });
 
     revalidatePath("/profile");
     return { message: "Profile updated successfully" };
   } catch (error) {
+    console.error("Error updating profile:", error);
     return renderError(error);
   }
 };

@@ -20,6 +20,10 @@ export const UserSchema = z.object({
       message: "Last name must be at most 20 characters long",
     }),
 
+  currentCity: z.string().max(20, {
+    message: "Current city must be at most 20 characters long",
+  }),
+
   bio: z.string().max(5000, {
     message: "Bio must be at most 5000 characters long",
   }),
@@ -66,7 +70,6 @@ export function validateWithZodSchema<T>(
 export const imageSchema = z.object({
   image: validateFile(),
 });
-
 function validateFile() {
   const maxUploadSize = 5 * 1024 * 1024; // Set the max upload size to 5 MB
   const acceptedFilesTypes = ["image/"];
